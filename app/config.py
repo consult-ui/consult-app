@@ -28,5 +28,7 @@ class Settings(BaseSettings):
 
     log_lvl: str = "INFO"
 
+    show_docs: bool = True
+
 
 settings = Settings()
