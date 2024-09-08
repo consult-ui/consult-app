@@ -49,7 +49,7 @@ def do_run_migrations(connection: Connection) -> None:
     context.configure(connection=connection, target_metadata=target_metadata)
 
     with context.begin_transaction():
-        connection.execute(text("LOCK TABLE alembic_version IN ACCESS EXCLUSIVE MODE;"))
+        # connection.execute(text("LOCK TABLE alembic_version IN ACCESS EXCLUSIVE MODE;"))
         context.run_migrations()
 
 
