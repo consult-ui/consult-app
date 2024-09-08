@@ -1,0 +1,1 @@
+web: alembic upgrade head && uvicorn app.main:app --port 8080 --forwarded-allow-ips='*' --proxy-headers --host=0.0.0.0 --log-level warning
