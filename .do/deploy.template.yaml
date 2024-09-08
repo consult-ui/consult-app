@@ -1,7 +1,7 @@
-spec:
- name: consult-app
- services:
- - name: web
-   git:
-     branch: main
-     repo_clone_url: https://github.com/consult-ui/consult-app
+name: consult-app
+services:
+- name: web
+  git:
+    repo_clone_url: https://github.com/consult-ui/consult-app.git
+    branch: main
+  dockerfile_path: Dockerfile

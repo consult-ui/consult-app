@@ -3,6 +3,9 @@ from datetime import timedelta
 from pydantic_settings import BaseSettings
 
 
+STATIC_FOLDER = "./static"
+
+
 class Settings(BaseSettings):
     pg_dsn: str
     pg_echo: bool
