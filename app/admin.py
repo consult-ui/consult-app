@@ -10,6 +10,22 @@ from starlette.requests import Request
 from app.config import settings
 from app.models.user import User
 from loguru import logger
+from wtforms import fields
+
+
+class PasswordField(fields.PasswordField):
+    def _value(self):
+        if self.data:
+            return ph.hash(self.data)
+        return ""
+
+    def process_formdata(self, valuelist):
+        if not valuelist:
+            raise ValueError("Invalid password")
+        try:
+            self.data = ph.hash(valuelist[0])
+        except ValueError:
+            raise ValueError("Invalid password")
 
 
 class UserAdmin(ModelView, model=User):
@@ -40,11 +56,7 @@ class UserAdmin(ModelView, model=User):
         User.expiration_date,
     ]
 
-    async def on_model_change(self, data, model, is_created, request):
-        logger.warning(f"on_model_change {data['password']}")
-        if is_created:
-            logger.warning(f"on_model_change is_created {data['password']}")
-            model.password = ph.hash(data["password"])
+    form_overrides = dict(password=PasswordField)
 
 
 JWT_ALGORITHM = "HS256"
