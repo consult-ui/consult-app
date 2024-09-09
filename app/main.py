@@ -10,7 +10,8 @@ from sqladmin import Admin
 from app.config import settings, STATIC_FOLDER
 from app.db import sessionmanager
 from app.exceptions import register_exception_handlers
-from app.admin import AdminAuth
+from app.admin import AdminAuth, UserAdmin
+
 
 uvloop.install()
 
@@ -64,3 +65,5 @@ admin = Admin(
     authentication_backend=AdminAuth(secret_key=settings.jwt_secret),
     templates_dir=STATIC_FOLDER + "/templates",
 )
+
+admin.add_view(UserAdmin)

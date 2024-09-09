@@ -1,44 +1,42 @@
 import base64
-import random
 from datetime import datetime, timedelta, UTC
 
 import argon2
 import jwt
-import json
 from loguru import logger
 from sqladmin import ModelView
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 from app.config import settings
+from app.models.user import User
 
 
-# class APIKeyAdmin(ModelView, model=APIKey):
-#     name = "API Key"
-#     name_plural = "API Keys"
+class UserAdmin(ModelView, model=User):
+    can_create = True
+    can_edit = True
+    can_delete = True
+    can_view_details = True
 
-#     can_create = True
-#     can_edit = True
-#     can_delete = True
-#     can_view_details = True
+    icon = "fa-solid fa-user"
 
-#     icon = "fa-solid fa-key"
+    column_searchable_list = ["phone_number", "email", "first_name", "last_name"]
+    column_sortable_list = [
+        "id",
+        "created_at",
+    ]
 
-#     column_searchable_list = ["key", "description"]
-#     column_sortable_list = [
-#         "id",
-#         "created_at",
-#     ]
+    column_exclude_list = [User.updated_at]
 
-#     column_exclude_list = [APIKey.updated_at]
+    page_size = 50
+    page_size_options = [25, 50, 100, 200]
 
-#     page_size = 50
-#     page_size_options = [25, 50, 100, 200]
-
-#     form_columns = [
-#         APIKey.description,
-#         APIKey.expires_at,
-#         APIKey.bandwidth_limit,
-#     ]
+    form_columns = [
+        User.phone_number,
+        User.email,
+        User.first_name,
+        User.last_name,
+        User.expiration_date,
+    ]
 
 
 JWT_ALGORITHM = "HS256"
