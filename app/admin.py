@@ -30,6 +30,10 @@ class PasswordField(fields.PasswordField):
             raise ValueError("Invalid password")
 
 
+def random_password():
+    return os.urandom(16).hex()
+
+
 class UserAdmin(ModelView, model=User):
     can_create = True
     can_edit = True
@@ -63,7 +67,7 @@ class UserAdmin(ModelView, model=User):
     form_args = dict(
         password=dict(
             label="Password",
-            default=lambda: os.urandom(16).hex(),
+            default=random_password,
             validators=[DataRequired()],
         )
     )
