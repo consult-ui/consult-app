@@ -33,6 +33,7 @@ class UserAdmin(ModelView, model=User):
     form_columns = [
         User.phone_number,
         User.email,
+        User.password,
         User.first_name,
         User.last_name,
         User.expiration_date,
