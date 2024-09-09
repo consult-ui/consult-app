@@ -38,6 +38,10 @@ class UserAdmin(ModelView, model=User):
         User.expiration_date,
     ]
 
+    async def on_model_change(self, data, model: User, is_created, request):
+        if is_created:
+            model.password = ph.hash(data["password"])
+
 
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_DELTA = timedelta(hours=48)

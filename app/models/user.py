@@ -7,7 +7,6 @@ from sqlalchemy import (
 from sqlalchemy.orm import mapped_column, Mapped
 from datetime import datetime
 from app.db import Base
-from app.schemas.base import PydanticType
 
 
 class User(Base):
@@ -16,6 +15,8 @@ class User(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     phone_number: Mapped[str] = mapped_column(Text, nullable=False)
     email: Mapped[str] = mapped_column(Text, nullable=False)
+
+    password: Mapped[str] = mapped_column(Text, nullable=False)
 
     first_name: Mapped[str] = mapped_column(Text, nullable=False)
     last_name: Mapped[str] = mapped_column(Text, nullable=False)
