@@ -27,7 +27,7 @@ class UserAdmin(ModelView, model=User):
 
     column_exclude_list = [User.updated_at]
 
-    page_size = 50
+    page_size = 25
     page_size_options = [25, 50, 100, 200]
 
     form_columns = [
