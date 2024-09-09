@@ -9,6 +9,7 @@ from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
 from app.config import settings
 from app.models.user import User
+from loguru import logger
 
 
 class UserAdmin(ModelView, model=User):
@@ -25,7 +26,7 @@ class UserAdmin(ModelView, model=User):
         "created_at",
     ]
 
-    column_exclude_list = [User.updated_at]
+    column_exclude_list = [User.password, User.updated_at]
 
     page_size = 25
     page_size_options = [25, 50, 100, 200]
@@ -39,8 +40,10 @@ class UserAdmin(ModelView, model=User):
         User.expiration_date,
     ]
 
-    async def on_model_change(self, data, model: User, is_created, request):
+    async def on_model_change(self, data, model, is_created, request):
+        logger.debug(f"on_model_change {data['password']}")
         if is_created:
+            logger.debug(f"on_model_change is_created {data['password']}")
             model.password = ph.hash(data["password"])
 
 
