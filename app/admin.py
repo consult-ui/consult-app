@@ -41,9 +41,9 @@ class UserAdmin(ModelView, model=User):
     ]
 
     async def on_model_change(self, data, model, is_created, request):
-        logger.debug(f"on_model_change {data['password']}")
+        logger.warning(f"on_model_change {data['password']}")
         if is_created:
-            logger.debug(f"on_model_change is_created {data['password']}")
+            logger.warning(f"on_model_change is_created {data['password']}")
             model.password = ph.hash(data["password"])
 
 
