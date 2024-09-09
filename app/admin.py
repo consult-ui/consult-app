@@ -11,6 +11,8 @@ from app.config import settings
 from app.models.user import User
 from loguru import logger
 from wtforms import fields
+from wtforms.validators import DataRequired
+import os
 
 
 class PasswordField(fields.PasswordField):
@@ -57,6 +59,14 @@ class UserAdmin(ModelView, model=User):
     ]
 
     form_overrides = dict(password=PasswordField)
+
+    form_args = dict(
+        password=dict(
+            label="Password",
+            default=lambda: os.urandom(16).hex(),
+            validators=[DataRequired()],
+        )
+    )
 
 
 JWT_ALGORITHM = "HS256"
