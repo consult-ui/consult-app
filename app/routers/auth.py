@@ -11,6 +11,7 @@ from app.exceptions import UnauthorizedError
 from app.models.refresh_session import RefreshSession
 from app.schemas.auth import LoginRequest, TokenPair
 from app.schemas.auth import RefreshTokenRequest
+from app.schemas.response import BaseResponse
 from app.utils.auth import create_access_token, ph, JWT_EXPIRATION_DELTA
 
 router = APIRouter(
@@ -20,7 +21,7 @@ router = APIRouter(
 
 
 @router.post("/sign-in")
-async def sign_in(db_session: DBSessionDep, req: LoginRequest):
+async def sign_in(db_session: DBSessionDep, req: LoginRequest) -> BaseResponse[TokenPair]:
     user = await user_crud.search_user_by_login(db_session, req.login)
     if user is None:
         raise UnauthorizedError("Неверный логин или пароль")
@@ -49,7 +50,11 @@ async def sign_in(db_session: DBSessionDep, req: LoginRequest):
         data={"id": user.id}, expires_delta=JWT_EXPIRATION_DELTA
     )
 
-    return TokenPair(access_token=access_token, refresh_token=str(rs.refresh_token), token_type="bearer")
+    return BaseResponse(
+        success=True,
+        msg="ok",
+        data=TokenPair(access_token=access_token, refresh_token=str(rs.refresh_token), token_type="bearer")
+    )
 
 
 @router.post("/refresh")
@@ -78,4 +83,8 @@ async def refresh(db_session: DBSessionDep, req: RefreshTokenRequest):
         data={"id": rs.user_id}, expires_delta=JWT_EXPIRATION_DELTA
     )
 
-    return TokenPair(access_token=access_token, refresh_token=str(rs.refresh_token), token_type="bearer")
+    return BaseResponse(
+        success=True,
+        msg="ok",
+        data=TokenPair(access_token=access_token, refresh_token=str(rs.refresh_token), token_type="bearer")
+    )
