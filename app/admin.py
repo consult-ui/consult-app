@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, UTC
 
 import argon2
 import jwt
@@ -12,7 +12,9 @@ from app.models.user import User
 from loguru import logger
 from wtforms import fields
 from wtforms.validators import DataRequired
-import os
+
+
+from app.dependencies import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
 
 
 class PasswordField(fields.PasswordField):
@@ -28,10 +30,6 @@ class PasswordField(fields.PasswordField):
             self.data = ph.hash(valuelist[0])
         except ValueError:
             raise ValueError("Invalid password")
-
-
-def random_password():
-    return os.urandom(16).hex()
 
 
 class UserAdmin(ModelView, model=User):
@@ -67,20 +65,12 @@ class UserAdmin(ModelView, model=User):
     form_args = dict(
         password=dict(
             label="Password",
-            default=random_password,
             validators=[DataRequired()],
         )
     )
 
 
-JWT_ALGORITHM = "HS256"
-JWT_EXPIRATION_DELTA = timedelta(hours=48)
-
-ph = argon2.PasswordHasher()
-
-
 class AdminAuth(AuthenticationBackend):
-
     async def login(self, request: Request) -> bool:
         form = await request.form()
         username, password = form["username"], form["password"]
