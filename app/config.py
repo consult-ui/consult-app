@@ -1,7 +1,4 @@
-from datetime import timedelta
-
 from pydantic_settings import BaseSettings
-
 
 STATIC_FOLDER = "./static"
 
@@ -13,6 +10,9 @@ class Settings(BaseSettings):
     admin_username: str
     admin_password_hash: str
     jwt_secret: str
+
+    gmail_email: str
+    gmail_password: str
 
     # s3_endpoint: str
     # s3_cdn_endpoint: str
