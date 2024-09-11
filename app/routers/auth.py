@@ -30,48 +30,48 @@ async def sign_in(db_session: DBSessionDep, req: LoginRequest):
         for session in active_sessions:
             await db_session.delete(session)
 
-    refresh_session = RefreshSession(
+    rs = RefreshSession(
         user_id=user.id,
         expires_in=datetime.now(UTC) + timedelta(days=60),
     )
 
-    db_session.add(refresh_session)
+    db_session.add(rs)
 
     await db_session.commit()
 
-    await db_session.refresh(refresh_session)
+    await db_session.refresh(rs)
 
     access_token = create_access_token(
         data={"id": user.id}, expires_delta=JWT_EXPIRATION_DELTA
     )
 
-    return TokenPair(access_token=access_token, refresh_token=str(refresh_session.refresh_token), token_type="bearer")
+    return TokenPair(access_token=access_token, refresh_token=str(rs.refresh_token), token_type="bearer")
 
 
 @router.post("/refresh")
 async def refresh(db_session: DBSessionDep, req: RefreshTokenRequest):
-    refresh_session = await auth_crud.get_session_by_refresh_token(db_session, req.refresh_token)
-    if refresh_session is None:
+    rs = await auth_crud.get_session_by_refresh_token(db_session, req.refresh_token)
+    if rs is None:
         raise UnauthorizedError("Неверный токен")
 
-    await db_session.delete(refresh_session)
+    await db_session.delete(rs)
 
-    if refresh_session.expires_in < datetime.now(UTC):
+    if rs.expires_in < datetime.now(UTC):
         raise UnauthorizedError("Токен просрочен")
 
-    refresh_session = RefreshSession(
-        user_id=refresh_session.user_id,
+    rs = RefreshSession(
+        user_id=rs.user_id,
         expires_in=datetime.now(UTC) + timedelta(days=60),
     )
 
-    db_session.add(refresh_session)
+    db_session.add(rs)
 
     await db_session.commit()
 
-    await db_session.refresh(refresh_session)
+    await db_session.refresh(rs)
 
     access_token = create_access_token(
-        data={"id": refresh_session.user_id}, expires_delta=JWT_EXPIRATION_DELTA
+        data={"id": rs.user_id}, expires_delta=JWT_EXPIRATION_DELTA
     )
 
-    return TokenPair(access_token=access_token, refresh_token=str(refresh_session.refresh_token), token_type="bearer")
+    return TokenPair(access_token=access_token, refresh_token=str(rs.refresh_token), token_type="bearer")
