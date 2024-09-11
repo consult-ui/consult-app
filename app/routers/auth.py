@@ -58,7 +58,7 @@ async def sign_in(db_session: DBSessionDep, req: LoginRequest) -> BaseResponse[T
 
 
 @router.post("/refresh")
-async def refresh(db_session: DBSessionDep, req: RefreshTokenRequest):
+async def refresh(db_session: DBSessionDep, req: RefreshTokenRequest) -> BaseResponse[TokenPair]:
     rs = await auth_crud.get_session_by_refresh_token(db_session, req.refresh_token)
     if rs is None:
         raise UnauthorizedError("Неверный токен")

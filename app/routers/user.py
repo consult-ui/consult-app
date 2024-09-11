@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get("/me")
-async def me(user: ActiveUserDep):
+async def me(user: ActiveUserDep) -> BaseResponse[PublicUser]:
     return BaseResponse(
         success=True,
         msg="ok",
