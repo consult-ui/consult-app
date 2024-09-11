@@ -38,6 +38,8 @@ class RefreshSessionAdmin(ModelView, model=RefreshSession):
 
     icon = "fa-solid fa-user"
 
+    column_list = "__all__"
+
     column_searchable_list = ["user_id", "refresh_token"]
     column_sortable_list = [
         "id",
