@@ -63,6 +63,12 @@ async def change_password(db_session: DBSessionDep, user: ActiveUserDep, req: Ch
             msg="неверный код"
         )
 
+    if len(req.new_password) < 8:
+        return BaseResponse(
+            success=False,
+            msg="пароль должен содержать не менее 8 символов"
+        )
+
     user.password = ph.hash(req.new_password)
     user.reset_password_code = None
 
