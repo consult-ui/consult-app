@@ -1,7 +1,6 @@
 import base64
 from datetime import datetime, UTC
 
-import argon2
 import jwt
 from loguru import logger
 from sqladmin import ModelView
@@ -14,7 +13,7 @@ from wtforms import fields
 from wtforms.validators import DataRequired
 
 
-from app.dependencies import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
+from app.utils.auth import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
 
 
 class PasswordField(fields.PasswordField):
