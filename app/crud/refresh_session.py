@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, UTC
 from typing import Sequence
 
@@ -14,7 +15,7 @@ async def get_active_sessions_by_user_id(db_session: AsyncSession, user_id: int)
     return rs.scalars().all()
 
 
-async def get_session_by_refresh_token(db_session: AsyncSession, refresh_token: str) -> RefreshSession:
+async def get_session_by_refresh_token(db_session: AsyncSession, refresh_token: uuid.UUID) -> RefreshSession:
     rs = await db_session.execute(
         select(RefreshSession).where(RefreshSession.refresh_token == refresh_token)
     )

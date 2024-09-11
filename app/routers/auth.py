@@ -22,7 +22,11 @@ router = APIRouter(
 @router.post("/sign-in")
 async def sign_in(db_session: DBSessionDep, req: LoginRequest):
     user = await user_crud.search_user_by_login(db_session, req.login)
-    if user is None or not ph.verify(user.password, req.password):
+    if user is None:
+        raise UnauthorizedError("Неверный логин или пароль")
+    try:
+        ph.verify(user.password, req.password)
+    except Exception as e:
         raise UnauthorizedError("Неверный логин или пароль")
 
     active_sessions = await auth_crud.get_active_sessions_by_user_id(db_session, user.id)
