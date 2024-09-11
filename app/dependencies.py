@@ -1,4 +1,7 @@
+import jwt
+
 from typing import Annotated
+from datetime import timezone, datetime
 
 from fastapi import Depends
 from fastapi import Header
@@ -9,10 +12,7 @@ from app.config import settings
 from app.db import get_db_session
 from app.exceptions import UnauthorizedError, NotFoundError, AccessDeniedError
 from app.models.user import User
-
-import jwt
-
-from datetime import timezone, datetime
+from app.utils.auth import JWT_ALGORITHM
 
 
 DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
