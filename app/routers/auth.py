@@ -45,7 +45,7 @@ async def sign_in(db_session: DBSessionDep, req: LoginRequest):
         data={"id": user.id}, expires_delta=JWT_EXPIRATION_DELTA
     )
 
-    return TokenPair(access_token=access_token, refresh_token=refresh_session.refresh_token, token_type="bearer")
+    return TokenPair(access_token=access_token, refresh_token=str(refresh_session.refresh_token), token_type="bearer")
 
 
 @router.post("/refresh")
@@ -74,4 +74,4 @@ async def refresh(db_session: DBSessionDep, req: RefreshTokenRequest):
         data={"id": refresh_session.user_id}, expires_delta=JWT_EXPIRATION_DELTA
     )
 
-    return TokenPair(access_token=access_token, refresh_token=refresh_session.refresh_token, token_type="bearer")
+    return TokenPair(access_token=access_token, refresh_token=str(refresh_session.refresh_token), token_type="bearer")
