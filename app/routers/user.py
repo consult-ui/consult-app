@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/me")
+@router.get("/me")
 async def me(user: ActiveUserDep):
     return BaseResponse(
         success=True,
