@@ -6,13 +6,12 @@ from loguru import logger
 from sqladmin import ModelView
 from sqladmin.authentication import AuthenticationBackend
 from starlette.requests import Request
-from app.config import settings
-from app.models.user import User
-from loguru import logger
 from wtforms import fields
 from wtforms.validators import DataRequired
 
-
+from app.config import settings
+from app.models.refresh_session import RefreshSession
+from app.models.user import User
 from app.utils.auth import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
 
 
@@ -29,6 +28,24 @@ class PasswordField(fields.PasswordField):
             self.data = ph.hash(valuelist[0])
         except ValueError:
             raise ValueError("Invalid password")
+
+
+class RefreshSessionAdmin(ModelView, model=RefreshSession):
+    can_create = False
+    can_edit = False
+    can_delete = True
+    can_view_details = True
+
+    icon = "fa-solid fa-user"
+
+    column_searchable_list = ["user_id", "refresh_token"]
+    column_sortable_list = [
+        "id",
+        "created_at",
+    ]
+
+    page_size = 25
+    page_size_options = [25, 50, 100, 200]
 
 
 class UserAdmin(ModelView, model=User):

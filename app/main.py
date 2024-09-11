@@ -9,7 +9,7 @@ from sqladmin import Admin
 
 import app.routers.auth as auth
 import app.routers.user as user
-from app.admin import AdminAuth, UserAdmin
+from app.admin import AdminAuth, UserAdmin, RefreshSessionAdmin
 from app.config import settings, STATIC_FOLDER
 from app.db import sessionmanager
 from app.exceptions import register_exception_handlers
@@ -69,3 +69,4 @@ admin = Admin(
 )
 
 admin.add_view(UserAdmin)
+admin.add_view(RefreshSessionAdmin)
