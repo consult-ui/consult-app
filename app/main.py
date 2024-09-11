@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from sqladmin import Admin
 
+import app.routers.auth as auth
+import app.routers.user as user
 from app.admin import AdminAuth, UserAdmin
 from app.config import settings, STATIC_FOLDER
 from app.db import sessionmanager
@@ -56,7 +58,8 @@ app.add_middleware(
 
 register_exception_handlers(app)
 
-# app.include_router(user.router)
+app.include_router(user.router)
+app.include_router(auth.router)
 
 admin = Admin(
     app=app,
