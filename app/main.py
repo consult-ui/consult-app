@@ -7,11 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from sqladmin import Admin
 
+from app.admin import AdminAuth, UserAdmin
 from app.config import settings, STATIC_FOLDER
 from app.db import sessionmanager
 from app.exceptions import register_exception_handlers
-from app.admin import AdminAuth, UserAdmin
-
 
 uvloop.install()
 
@@ -36,9 +35,9 @@ logger.info(f"📚 Docs are {'enabled' if settings.show_docs == 'true' else 'dis
 app = FastAPI(  # noqa
     root_path="/api/v1",
     lifespan=lifespan,
-    docs_url="/docs" if settings.show_docs == "true" else None,
-    redoc_url="/redoc" if settings.show_docs == "true" else None,
-    openapi_url="/openapi.json" if settings.show_docs == "true" else None,
+    docs_url="/docs" if settings.show_docs else None,
+    redoc_url="/redoc" if settings.show_docs else None,
+    openapi_url="/openapi.json" if settings.show_docs else None,
 )
 
 
