@@ -12,6 +12,10 @@ class PublicUser(BaseModel):
     expiration_date: datetime
 
 
+class ResetPasswordRequest(BaseModel):
+    email: str
+
+
 class ChangePasswordRequest(BaseModel):
     reset_code: str
     new_password: str

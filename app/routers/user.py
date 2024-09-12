@@ -1,12 +1,13 @@
 from fastapi import APIRouter
 
 from app.config import settings
+from app.crud.user import search_user_by_email
 from app.dependencies import (
     ActiveUserDep,
     DBSessionDep
 )
 from app.schemas.response import BaseResponse
-from app.schemas.user import PublicUser, ChangePasswordRequest
+from app.schemas.user import PublicUser, ChangePasswordRequest, ResetPasswordRequest
 from app.utils.auth import ph
 from app.utils.gmail import send_email
 from app.utils.rand import generate_random_string
@@ -34,7 +35,14 @@ async def me(user: ActiveUserDep) -> BaseResponse[PublicUser]:
 
 
 @router.post("/reset-password")
-async def reset_password(db_session: DBSessionDep, user: ActiveUserDep) -> BaseResponse:
+async def reset_password(db_session: DBSessionDep, req: ResetPasswordRequest) -> BaseResponse:
+    user = await search_user_by_email(db_session, req.email)
+    if not user:
+        return BaseResponse(
+            success=True,
+            msg="ок"
+        )
+
     reset_code = generate_random_string(6)
 
     user.reset_password_code = reset_code
@@ -51,7 +59,7 @@ async def reset_password(db_session: DBSessionDep, user: ActiveUserDep) -> BaseR
 
     return BaseResponse(
         success=True,
-        msg=f"письмо отправлено на {user.email}"
+        msg="ок"
     )
 
 
