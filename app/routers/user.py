@@ -64,7 +64,14 @@ async def reset_password(db_session: DBSessionDep, req: ResetPasswordRequest) ->
 
 
 @router.post("/change-password")
-async def change_password(db_session: DBSessionDep, user: ActiveUserDep, req: ChangePasswordRequest) -> BaseResponse:
+async def change_password(db_session: DBSessionDep, req: ChangePasswordRequest) -> BaseResponse:
+    user = await search_user_by_email(db_session, req.email)
+    if not user:
+        return BaseResponse(
+            success=False,
+            msg="неверный код"
+        )
+
     if user.reset_password_code != req.reset_code:
         return BaseResponse(
             success=False,
