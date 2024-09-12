@@ -53,8 +53,8 @@ async def reset_password(db_session: DBSessionDep, req: ResetPasswordRequest) ->
         sender_email=settings.gmail_email,
         sender_password=settings.gmail_password,
         recipient_email=user.email,
-        subject="Reset password",
-        message_body=f"Reset password code: {reset_code}"
+        subject="Сброс пароля",
+        message_body=f"Ваш код для сброса пароля: {reset_code}"
     )
 
     return BaseResponse(
