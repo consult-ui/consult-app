@@ -3,9 +3,13 @@ import uuid
 from pydantic import BaseModel
 
 
-class LoginRequest(BaseModel):
+class SignInRequest(BaseModel):
     login: str
     password: str
+
+
+class SignOutRequest(BaseModel):
+    refresh_token: uuid.UUID
 
 
 class RefreshTokenRequest(BaseModel):

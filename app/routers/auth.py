@@ -9,8 +9,8 @@ from app.dependencies import (
 )
 from app.exceptions import UnauthorizedError
 from app.models.refresh_session import RefreshSession
-from app.schemas.auth import LoginRequest, TokenPair
 from app.schemas.auth import RefreshTokenRequest
+from app.schemas.auth import SignInRequest, TokenPair, SignOutRequest
 from app.schemas.response import BaseResponse
 from app.utils.auth import create_access_token, ph, JWT_EXPIRATION_DELTA
 
@@ -21,7 +21,7 @@ router = APIRouter(
 
 
 @router.post("/sign-in")
-async def sign_in(db_session: DBSessionDep, req: LoginRequest) -> BaseResponse[TokenPair]:
+async def sign_in(db_session: DBSessionDep, req: SignInRequest) -> BaseResponse[TokenPair]:
     user = await user_crud.search_user_by_login(db_session, req.login)
     if user is None:
         raise UnauthorizedError("Неверный логин или пароль")
@@ -57,10 +57,20 @@ async def sign_in(db_session: DBSessionDep, req: LoginRequest) -> BaseResponse[T
     )
 
 
+@router.post("/sign-out")
+async def sign_out(db_session: DBSessionDep, req: SignOutRequest) -> BaseResponse:
+    sess = await auth_crud.get_session_by_refresh_token(db_session, req.refresh_token)
+    if sess:
+        await db_session.delete(sess)
+        await db_session.commit()
+
+    return BaseResponse(success=True, msg="ок")
+
+
 @router.post("/refresh")
 async def refresh(db_session: DBSessionDep, req: RefreshTokenRequest) -> BaseResponse[TokenPair]:
     rs = await auth_crud.get_session_by_refresh_token(db_session, req.refresh_token)
-    if rs is None:
+    if not rs:
         raise UnauthorizedError("Неверный токен")
 
     await db_session.delete(rs)
