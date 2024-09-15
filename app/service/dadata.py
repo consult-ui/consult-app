@@ -25,7 +25,13 @@ class Dadata:
 
         res = []
         for dto in suggestion_list:
-            suggest = OrganizationSuggestion(tax_number=dto["data"]["inn"], name=dto["data"]["name"]["short_with_opf"])
+            org_data = dto["data"]
+
+            inn = org_data.get("inn")
+            if not inn:
+                continue
+
+            suggest = OrganizationSuggestion(tax_number=inn, name=org_data["name"]["short_with_opf"])
             res.append(suggest)
 
         return res
