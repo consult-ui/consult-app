@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     gmail_email: str
     gmail_password: str
 
+    dadata_api_key: str
+
     # s3_endpoint: str
     # s3_cdn_endpoint: str
     # s3_secret_key: str
