@@ -31,6 +31,12 @@ class Dadata:
             if not inn:
                 continue
 
+            management = org_data.get("management")
+
+            head_name = None
+            if management:
+                head_name = management.get("name")
+
             suggest = OrganizationSuggestion(
                 tax_number=inn,
                 name=org_data["name"]["short_with_opf"],
