@@ -46,10 +46,7 @@ async def create_organization(
         context=req.context
     )
 
-    if user.organizations:
-        user.organizations.append(org)
-    else:
-        user.organizations = [org]
+    user.organizations.append(org)
 
     await db_session.commit()
 
