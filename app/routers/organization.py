@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.post("/suggest")
+@router.get("/suggest")
 async def suggest(_: ActiveUserDep, q: str) -> BaseResponse[List[OrganizationSuggestion]]:
     suggestions = await dadata.suggest_organizations(q)
     return BaseResponse(
