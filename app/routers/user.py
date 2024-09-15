@@ -30,6 +30,7 @@ async def me(user: ActiveUserDep) -> BaseResponse[PublicUser]:
             first_name=user.first_name,
             last_name=user.last_name,
             expiration_date=user.expiration_date,
+            organization_id=user.organizations[0].id if user.organizations else None
         )
     )
 
