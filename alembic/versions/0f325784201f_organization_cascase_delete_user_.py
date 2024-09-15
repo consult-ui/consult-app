@@ -21,14 +21,14 @@ def upgrade() -> None:
     -- Удаляем существующее ограничение внешнего ключа
 ALTER TABLE user_organizations
 DROP CONSTRAINT user_organizations_organization_id_fkey;
+    """)
 
--- Добавляем новое ограничение с ON DELETE CASCADE
+    op.execute("""
 ALTER TABLE user_organizations
 ADD CONSTRAINT user_organizations_organization_id_fkey
 FOREIGN KEY (organization_id)
 REFERENCES organizations (id)
 ON DELETE CASCADE;
-
     """)
 
 
