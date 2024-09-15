@@ -4,11 +4,22 @@ from sqlalchemy import (
     BigInteger,
     func,
     Text,
-    TIMESTAMP
+    TIMESTAMP,
+    Table,
+    ForeignKey,
+    Column
 )
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from app.db import Base
+from app.models.organization import Organization
+
+user_organization_table = Table(
+    "user_organizations",
+    Base.metadata,
+    Column("user_id", ForeignKey("users.id"), primary_key=True),
+    Column("organization_id", ForeignKey("organizations.id"), primary_key=True),
+)
 
 
 class User(Base):
@@ -27,6 +38,10 @@ class User(Base):
 
     expiration_date: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False
+    )
+
+    organizations: Mapped[Organization] = relationship(
+        secondary=user_organization_table, lazy="subquery"
     )
 
     created_at: Mapped[datetime] = mapped_column(
