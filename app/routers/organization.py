@@ -5,14 +5,56 @@ from fastapi import APIRouter
 from app.dependencies import (
     ActiveUserDep,
 )
-from app.schemas.organization import OrganizationSuggestion, ExternalOrganization
+from app.dependencies import DBSessionDep
+from app.exceptions import BadRequestError, NotFoundError
+from app.models.organization import Organization
+from app.schemas.organization import (
+    PublicOrganization,
+    ExternalOrganization,
+    OrganizationSuggestion,
+    CreateOrganizationRequest,
+)
 from app.schemas.response import BaseResponse
 from app.service.dadata import dadata
+from app.utils.organization import make_public_organization
 
 router = APIRouter(
     prefix="/organization",
     tags=["organization"],
 )
+
+
+@router.post("/create")
+async def create_organization(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        req: CreateOrganizationRequest
+) -> BaseResponse[PublicOrganization]:
+    if len(user.organizations) > 0:
+        raise BadRequestError("организация уже создана")
+
+    org = Organization(
+        name=req.name,
+        activity_type=req.activity_type,
+        tax_number=req.tax_number,
+        head_name=req.head_name,
+        address=req.address,
+        quarterly_income=req.quarterly_income,
+        quarterly_expenses=req.quarterly_expenses,
+        number_employees=req.number_employees,
+        average_receipt=req.average_receipt,
+        context=req.context
+    )
+
+    user.organizations.append(org)
+
+    await db_session.commit()
+
+    return BaseResponse(
+        success=True,
+        msg="ок",
+        data=make_public_organization(org)
+    )
 
 
 @router.get("/suggest")
@@ -36,10 +78,13 @@ async def search_organization(_: ActiveUserDep, tax_number: str) -> BaseResponse
 
 
 @router.get("/{organization_id}")
-async def get_organization_by_id(active_user: ActiveUserDep, organization_id: int):
-    pass
+async def get_organization_by_id(user: ActiveUserDep, organization_id: int):
+    for org in user.organizations:
+        if org.id == organization_id:
+            return BaseResponse(
+                success=True,
+                msg="ок",
+                data=make_public_organization(org)
+            )
 
-
-@router.post("/create")
-async def create_organization(active_user: ActiveUserDep):
-    pass
+    raise NotFoundError("организация не найдена")

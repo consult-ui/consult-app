@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
@@ -10,6 +11,7 @@ class PublicUser(BaseModel):
     first_name: str
     last_name: str
     expiration_date: datetime
+    organization_id: Optional[int] = None
 
 
 class ResetPasswordRequest(BaseModel):

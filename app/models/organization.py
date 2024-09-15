@@ -28,7 +28,7 @@ class Organization(Base):
     number_employees: Mapped[int] = mapped_column(BigInteger, nullable=True)
     average_receipt: Mapped[int] = mapped_column(BigInteger, nullable=True)
 
-    context = mapped_column(Text, nullable=False, default="")
+    context: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
