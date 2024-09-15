@@ -30,7 +30,7 @@ async def create_organization(
         user: ActiveUserDep,
         req: CreateOrganizationRequest
 ) -> BaseResponse[PublicOrganization]:
-    if len(user.organizations) > 0:
+    if user.organizations:
         raise BadRequestError("организация уже создана")
 
     org = Organization(
