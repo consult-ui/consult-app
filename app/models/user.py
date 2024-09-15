@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import (
     BigInteger,
@@ -40,7 +41,7 @@ class User(Base):
         TIMESTAMP(timezone=True), nullable=False
     )
 
-    organizations: Mapped[Organization] = relationship(
+    organizations: Mapped[List[Organization]] = relationship(
         secondary=user_organization_table, lazy="subquery"
     )
 
