@@ -40,7 +40,7 @@ class Dadata:
             suggest = OrganizationSuggestion(
                 tax_number=inn,
                 name=org_data["name"]["short_with_opf"],
-                head_name=org_data["management"]["name"],
+                head_name=head_name,
             )
             res.append(suggest)
 
