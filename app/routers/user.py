@@ -29,6 +29,8 @@ async def me(user: ActiveUserDep) -> BaseResponse[PublicUser]:
             phone_number=user.phone_number,
             first_name=user.first_name,
             last_name=user.last_name,
+            whatsapp_url=user.whatsapp_url,
+            telegram_url=user.telegram_url,
             expiration_date=user.expiration_date,
             organization_id=user.organizations[0].id if user.organizations else None
         )

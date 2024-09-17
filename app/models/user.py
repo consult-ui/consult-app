@@ -35,6 +35,9 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(Text, nullable=False)
     last_name: Mapped[str] = mapped_column(Text, nullable=False)
 
+    whatsapp_url: Mapped[str] = mapped_column(Text, nullable=False)
+    telegram_url: Mapped[str] = mapped_column(Text, nullable=False)
+
     reset_password_code: Mapped[str] = mapped_column(Text, nullable=True)
 
     expiration_date: Mapped[datetime] = mapped_column(
