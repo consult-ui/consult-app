@@ -19,8 +19,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    pass
+    op.add_column('users', sa.Column('whatsapp_url', sa.Text(), nullable=False))
+    op.add_column('users', sa.Column('telegram_url', sa.Text(), nullable=False))
 
 
 def downgrade() -> None:
-    pass
+    op.drop_column('users', 'whatsapp_url')
+    op.drop_column('users', 'telegram_url')
