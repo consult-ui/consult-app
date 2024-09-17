@@ -10,6 +10,8 @@ class PublicUser(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
+    whatsapp_url: str
+    telegram_url: str
     expiration_date: datetime
     organization_id: Optional[int] = None
 

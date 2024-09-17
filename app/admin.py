@@ -97,6 +97,8 @@ class UserAdmin(ModelView, model=User):
         User.first_name,
         User.last_name,
         User.expiration_date,
+        User.whatsapp_url,
+        User.telegram_url,
     ]
 
     form_overrides = dict(password=PasswordField)
