@@ -11,10 +11,33 @@ from wtforms.validators import DataRequired
 
 from app.config import settings
 from app.models.chat import Chat
+from app.models.message import Message
 from app.models.organization import Organization
 from app.models.refresh_session import RefreshSession
 from app.models.user import User
 from app.utils.auth import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
+
+
+class MessageAdmin(ModelView, model=Message):
+    can_create = False
+    can_edit = True
+    can_delete = True
+    can_view_details = True
+
+    icon = "fa-solid fa-comment"
+
+    column_searchable_list = [Message.chat_id]
+    column_sortable_list = [
+        "id",
+        "created_at",
+    ]
+
+    column_exclude_list = [Message.created_at]
+    
+    form_excluded_columns = [Message.id, Message.created_at]
+
+    page_size = 50
+    page_size_options = [25, 50, 100, 200]
 
 
 class ChatAdmin(ModelView, model=Chat):
@@ -31,7 +54,9 @@ class ChatAdmin(ModelView, model=Chat):
         "created_at",
     ]
 
-    column_exclude_list = [Chat.id, Chat.created_at, Chat.updated_at]
+    column_exclude_list = [Chat.updated_at]
+
+    form_excluded_columns = [Chat.id, Chat.created_at, Chat.updated_at]
 
     page_size = 50
     page_size_options = [25, 50, 100, 200]
@@ -52,6 +77,8 @@ class OrganizationAdmin(ModelView, model=Organization):
     ]
 
     column_exclude_list = [Organization.updated_at]
+
+    form_excluded_columns = [Organization.id, Organization.created_at, Organization.updated_at]
 
     page_size = 50
     page_size_options = [25, 50, 100, 200]
