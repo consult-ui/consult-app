@@ -24,6 +24,7 @@ def upgrade() -> None:
         sa.Column("user_id", sa.BigInteger(), nullable=False),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("desc", sa.Text(), nullable=False, default=""),
+        sa.Column("icon_url", sa.Text(), nullable=True),
         sa.Column("color", sa.Text(), nullable=True),
         sa.Column("system_prompt", sa.Text(), nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False, server_default=sa.func.now()),

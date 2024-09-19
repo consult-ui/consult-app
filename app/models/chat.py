@@ -22,6 +22,7 @@ class Chat(Base):
     desc: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     color: Mapped[str] = mapped_column(Text, nullable=True)
+    icon_url: Mapped[str] = mapped_column(Text, nullable=True)
 
     system_prompt: Mapped[str] = mapped_column(Text, nullable=False)
 
