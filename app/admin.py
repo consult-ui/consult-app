@@ -23,7 +23,7 @@ class ChatAdmin(ModelView, model=Chat):
     can_delete = True
     can_view_details = True
 
-    icon = "fa-solid fa-user"
+    icon = "fa-solid fa-headset"
 
     column_searchable_list = [Chat.name, Chat.desc, Chat.system_prompt]
     column_sortable_list = [
@@ -43,7 +43,7 @@ class OrganizationAdmin(ModelView, model=Organization):
     can_delete = True
     can_view_details = True
 
-    icon = "fa-solid fa-user"
+    icon = "fa-solid fa-briefcase"
 
     column_searchable_list = [Organization.name, Organization.tax_number, Organization.head_name]
     column_sortable_list = [
@@ -78,7 +78,7 @@ class RefreshSessionAdmin(ModelView, model=RefreshSession):
     can_delete = True
     can_view_details = True
 
-    icon = "fa-solid fa-user"
+    icon = "fa-solid fa-key"
 
     column_list = "__all__"
 
