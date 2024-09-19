@@ -31,7 +31,7 @@ class ChatAdmin(ModelView, model=Chat):
         "created_at",
     ]
 
-    column_exclude_list = [Chat.updated_at]
+    column_exclude_list = [Chat.id, Chat.created_at, Chat.updated_at]
 
     page_size = 50
     page_size_options = [25, 50, 100, 200]
