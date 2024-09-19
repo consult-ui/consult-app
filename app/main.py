@@ -8,6 +8,7 @@ from loguru import logger
 from sqladmin import Admin
 
 import app.routers.auth as auth
+import app.routers.chat as chat
 import app.routers.organization as organization
 import app.routers.user as user
 from app.admin import AdminAuth, UserAdmin, RefreshSessionAdmin, OrganizationAdmin, ChatAdmin, MessageAdmin, \
@@ -63,6 +64,7 @@ register_exception_handlers(app)
 app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(organization.router)
+app.include_router(chat.router)
 
 admin = Admin(
     app=app,
