@@ -38,7 +38,7 @@ class ChatAdmin(ModelView, model=Chat):
 
 
 class OrganizationAdmin(ModelView, model=Organization):
-    can_create = False
+    can_create = True
     can_edit = True
     can_delete = True
     can_view_details = True
