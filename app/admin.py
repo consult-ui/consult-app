@@ -10,10 +10,31 @@ from wtforms import fields
 from wtforms.validators import DataRequired
 
 from app.config import settings
+from app.models.chat import Chat
 from app.models.organization import Organization
 from app.models.refresh_session import RefreshSession
 from app.models.user import User
 from app.utils.auth import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
+
+
+class ChatAdmin(ModelView, model=Chat):
+    can_create = False
+    can_edit = True
+    can_delete = True
+    can_view_details = True
+
+    icon = "fa-solid fa-user"
+
+    column_searchable_list = [Chat.name, Chat.desc, Chat.system_prompt]
+    column_sortable_list = [
+        "id",
+        "created_at",
+    ]
+
+    column_exclude_list = [Chat.updated_at]
+
+    page_size = 50
+    page_size_options = [25, 50, 100, 200]
 
 
 class OrganizationAdmin(ModelView, model=Organization):
