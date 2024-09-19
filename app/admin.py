@@ -18,7 +18,7 @@ from app.utils.auth import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
 
 
 class ChatAdmin(ModelView, model=Chat):
-    can_create = False
+    can_create = True
     can_edit = True
     can_delete = True
     can_view_details = True
