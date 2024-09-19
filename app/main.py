@@ -10,7 +10,8 @@ from sqladmin import Admin
 import app.routers.auth as auth
 import app.routers.organization as organization
 import app.routers.user as user
-from app.admin import AdminAuth, UserAdmin, RefreshSessionAdmin, OrganizationAdmin, ChatAdmin, MessageAdmin
+from app.admin import AdminAuth, UserAdmin, RefreshSessionAdmin, OrganizationAdmin, ChatAdmin, MessageAdmin, \
+    AssistantAdmin
 from app.config import settings, STATIC_FOLDER
 from app.db import sessionmanager
 from app.exceptions import register_exception_handlers
@@ -75,3 +76,4 @@ admin.add_view(RefreshSessionAdmin)
 admin.add_view(OrganizationAdmin)
 admin.add_view(ChatAdmin)
 admin.add_view(MessageAdmin)
+admin.add_view(AssistantAdmin)

@@ -10,12 +10,33 @@ from wtforms import fields
 from wtforms.validators import DataRequired
 
 from app.config import settings
+from app.models.assistant import Assistant
 from app.models.chat import Chat
 from app.models.message import Message
 from app.models.organization import Organization
 from app.models.refresh_session import RefreshSession
 from app.models.user import User
 from app.utils.auth import JWT_ALGORITHM, JWT_EXPIRATION_DELTA, ph
+
+
+class AssistantAdmin(ModelView, model=Assistant):
+    can_create = True
+    can_edit = True
+    can_delete = True
+    can_view_details = True
+
+    icon = "fa-solid fa-robot"
+
+    column_searchable_list = [Assistant.name, Assistant.desc, Assistant.instruction]
+    column_sortable_list = [
+        "id",
+        "created_at",
+    ]
+
+    form_excluded_columns = [Assistant.id, Assistant.created_at, Assistant.updated_at]
+
+    page_size = 50
+    page_size_options = [25, 50, 100, 200]
 
 
 class MessageAdmin(ModelView, model=Message):
@@ -33,7 +54,7 @@ class MessageAdmin(ModelView, model=Message):
     ]
 
     column_exclude_list = [Message.created_at]
-    
+
     form_excluded_columns = [Message.id, Message.created_at]
 
     page_size = 50
