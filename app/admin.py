@@ -27,6 +27,7 @@ class AssistantAdmin(ModelView, model=Assistant):
 
     icon = "fa-solid fa-robot"
 
+    column_list = "__all__"
     column_searchable_list = [Assistant.name, Assistant.desc, Assistant.instruction]
     column_sortable_list = [
         "id",
