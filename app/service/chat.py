@@ -2,6 +2,8 @@ from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exceptions import NotFoundError
+from app.models.assistant import Assistant
 from app.models.chat import Chat
 from app.models.user import User
 from app.prompts.default import default_chat
@@ -14,6 +16,29 @@ async def create_default_chat(db_session: AsyncSession, user: User, org_id: Opti
         name="Бизнес ассистент",
         desc="Стандартный чат для общих вопросов",
         system_prompt=make_system_prompt(user, org_id, default_chat),
+    )
+    db_session.add(chat)
+
+    await db_session.commit()
+
+    await db_session.refresh(chat)
+
+    return chat
+
+
+async def create_chat(db_session: AsyncSession, user: User, org_id: Optional[int], assistant_id: int) -> Chat:
+    assistant = await db_session.get(Assistant, assistant_id)
+    if not assistant:
+        raise NotFoundError("Ассистент не найден")
+
+    chat = Chat(
+        user_id=user.id,
+        organization_id=org_id,
+        name=assistant.name,
+        desc=assistant.desc,
+        color=assistant.color,
+        icon_url=assistant.icon_url,
+        system_prompt=make_system_prompt(user, org_id, assistant.instruction),
     )
     db_session.add(chat)
 

@@ -21,8 +21,22 @@ router = APIRouter(
 
 
 @router.post("/create")
-async def create_chat(user: ActiveUserDep, req: CreateChatRequest) -> BaseResponse[PublicChat]:
-    pass
+async def create_chat(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        req: CreateChatRequest,
+        org_id: OrganizationIdDep,
+) -> BaseResponse[PublicChat]:
+    if not req.assistant_id:
+        chat = await service.create_default_chat(db_session, user, org_id)
+    else:
+        chat = await service.create_chat(db_session, user, req.assistant_id, org_id)
+
+    return BaseResponse(
+        success=True,
+        msg="чат создан",
+        data=make_public_chat(chat),
+    )
 
 
 @router.post("/{chat_id}/update")
