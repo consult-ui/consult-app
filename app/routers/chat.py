@@ -33,7 +33,7 @@ async def list_chats(
 ) -> BaseResponse[List[PublicChat]]:
     chats = await crud.get_user_organization_chats(db_session, user.id, org_id)
     if len(chats) == 0:
-        chat = service.create_default_chat(db_session, user, org_id)
+        chat = await service.create_default_chat(db_session, user, org_id)
         chats = [chat]
 
     return BaseResponse(
