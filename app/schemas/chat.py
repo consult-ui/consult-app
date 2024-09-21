@@ -15,11 +15,3 @@ class PublicChat(BaseModel):
     color: Optional[str] = None
     icon_url: Optional[str] = None
     created_at: datetime
-
-
-class PublicAssistant(BaseModel):
-    id: int
-    name: str
-    desc: str
-    color: str
-    icon_url: str
