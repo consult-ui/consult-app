@@ -2,9 +2,9 @@ from typing import List
 
 from fastapi import APIRouter
 
-import app.crud.assistant as assistant_crud
-import app.crud.chat as chat_crud
 import app.service.chat as service
+from app.crud.assistant import get_all_assistants
+from app.crud.chat import get_user_organization_chats
 from app.dependencies import ActiveUserDep, DBSessionDep, OrganizationIdDep
 from app.exceptions import NotFoundError
 from app.models.chat import Chat
@@ -77,7 +77,7 @@ async def list_chats(
         user: ActiveUserDep,
         org_id: OrganizationIdDep,
 ) -> BaseResponse[List[PublicChat]]:
-    chats = await chat_crud.get_user_organization_chats(db_session, user.id, org_id)
+    chats = await get_user_organization_chats(db_session, user.id, org_id)
     if not chats:
         chat = await service.create_default_chat(db_session, user, org_id)
         chats = [chat]
@@ -91,7 +91,7 @@ async def list_chats(
 
 @router.get("/assistant/list")
 async def list_assistants(db_session: DBSessionDep, _: ActiveUserDep) -> BaseResponse[List[PublicAssistant]]:
-    assistants = await assistant_crud.get_all_assistants(db_session)
+    assistants = await get_all_assistants(db_session)
     return BaseResponse(
         success=True,
         msg="ок",
