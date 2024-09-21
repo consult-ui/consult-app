@@ -50,11 +50,11 @@ async def create_organization(
     user.organizations.append(org)
 
     await db_session.flush()
-    
+
     await db_session.refresh(org)
     await db_session.refresh(user)
 
-    if len(user.chats) == 1:
+    if len(user.organizations) == 1:
         await add_org_context_to_user_chats(db_session, user, org)
 
     await db_session.commit()
