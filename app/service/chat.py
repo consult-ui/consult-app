@@ -2,11 +2,18 @@ from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud.chat import get_user_organization_chats
 from app.exceptions import NotFoundError
 from app.models.assistant import Assistant
 from app.models.chat import Chat
 from app.models.user import User
 from app.prompts.default import default_chat
+
+
+async def add_org_context_to_user_chats(db_session: AsyncSession, user: User, org_id: int) -> None:
+    chats = await get_user_organization_chats(db_session, user.id, org_id=None)
+    for chat in chats:
+        chat.system_prompt = make_system_prompt(user, org_id, chat.system_prompt)
 
 
 async def create_default_chat(db_session: AsyncSession, user: User, org_id: Optional[int]) -> Chat:

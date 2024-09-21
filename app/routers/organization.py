@@ -15,6 +15,7 @@ from app.schemas.organization import (
     CreateOrganizationRequest,
 )
 from app.schemas.response import BaseResponse
+from app.service.chat import add_org_context_to_user_chats
 from app.service.dadata import dadata
 from app.utils.organization import make_public_organization
 
@@ -47,6 +48,14 @@ async def create_organization(
     )
 
     user.organizations.append(org)
+
+    await db_session.flush()
+    
+    await db_session.refresh(org)
+    await db_session.refresh(user)
+
+    if len(user.chats) == 1:
+        await add_org_context_to_user_chats(db_session, user, org)
 
     await db_session.commit()
 
