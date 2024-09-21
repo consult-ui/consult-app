@@ -30,7 +30,7 @@ async def create_chat(
     if not req.assistant_id:
         chat = await service.create_default_chat(db_session, user, org_id)
     else:
-        chat = await service.create_chat(db_session, user, req.assistant_id, org_id)
+        chat = await service.create_chat(db_session, user, org_id, req.assistant_id)
 
     return BaseResponse(
         success=True,
