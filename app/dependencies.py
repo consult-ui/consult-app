@@ -1,8 +1,7 @@
-import jwt
-
-from typing import Annotated
 from datetime import timezone, datetime
+from typing import Annotated, Optional
 
+import jwt
 from fastapi import Depends
 from fastapi import Header
 from loguru import logger
@@ -13,7 +12,6 @@ from app.db import get_db_session
 from app.exceptions import UnauthorizedError, NotFoundError, AccessDeniedError
 from app.models.user import User
 from app.utils.auth import JWT_ALGORITHM
-
 
 DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
 
@@ -53,3 +51,12 @@ async def get_active_user(id: CurrentUserIdDep, db_session: DBSessionDep) -> Use
 
 
 ActiveUserDep = Annotated[User, Depends(get_active_user)]
+
+
+async def get_organization_id(x_org_id: Annotated[str, Header()]) -> Optional[int]:
+    if not x_org_id:
+        return None
+    return int(x_org_id)
+
+
+OrganizationIdDep = Annotated[Optional[int], Depends(get_organization_id)]

@@ -2,9 +2,12 @@ from typing import List
 
 from fastapi import APIRouter
 
-from app.dependencies import ActiveUserDep
+import app.crud.chat as crud
+import app.service.chat as service
+from app.dependencies import ActiveUserDep, DBSessionDep, OrganizationIdDep
 from app.schemas.chat import CreateChatRequest, PublicAssistant, PublicChat
 from app.schemas.response import BaseResponse
+from app.utils.chat import make_public_chats
 
 router = APIRouter(
     prefix="/chat",
@@ -23,8 +26,21 @@ async def delete_chat(user: ActiveUserDep, chat_id: int) -> BaseResponse:
 
 
 @router.get("/list")
-async def list_chats(user: ActiveUserDep) -> BaseResponse[List[PublicChat]]:
-    pass
+async def list_chats(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        org_id: OrganizationIdDep,
+) -> BaseResponse[List[PublicChat]]:
+    chats = await crud.get_user_organization_chats(db_session, user.id, org_id)
+    if len(chats) == 0:
+        chat = service.create_default_chat(db_session, user, org_id)
+        chats = [chat]
+
+    return BaseResponse(
+        success=True,
+        msg="ок",
+        data=make_public_chats(chats),
+    )
 
 
 @router.get("/assistant/list")

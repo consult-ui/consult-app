@@ -1,0 +1,65 @@
+from typing import Optional
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.chat import Chat
+from app.models.user import User
+from app.prompts.default import default_chat
+
+
+async def create_default_chat(db_session: AsyncSession, user: User, org_id: Optional[int]) -> Chat:
+    chat = Chat(
+        user_id=user.id,
+        organization_id=org_id,
+        name="Бизнес ассистент",
+        desc="Стандартный чат для общих вопросов",
+        system_prompt=make_system_prompt(user, org_id, default_chat),
+    )
+    db_session.add(chat)
+
+    await db_session.commit()
+
+    await db_session.refresh(chat)
+
+    return chat
+
+
+def make_system_prompt(user: User, organization_id: Optional[int], assistant_prompt: str) -> str:
+    if not organization_id:
+        return assistant_prompt
+
+    organization = None
+    for organization in user.organizations:
+        if organization.id == organization_id:
+            break
+
+    if not organization:
+        return assistant_prompt
+
+    context_parts = []
+    if organization.name:
+        context_parts.append(f"Organization Name: {organization.name}")
+    if organization.activity_type:
+        context_parts.append(f"Activity Type: {organization.activity_type}")
+    if organization.tax_number:
+        context_parts.append(f"Tax Number: {organization.tax_number}")
+    if organization.head_name:
+        context_parts.append(f"Head of Organization: {organization.head_name}")
+    if organization.address:
+        context_parts.append(f"Address: {organization.address}")
+    if organization.quarterly_income is not None:
+        context_parts.append(f"Quarterly Income: {organization.quarterly_income}")
+    if organization.quarterly_expenses is not None:
+        context_parts.append(f"Quarterly Expenses: {organization.quarterly_expenses}")
+    if organization.number_employees is not None:
+        context_parts.append(f"Number of Employees: {organization.number_employees}")
+    if organization.average_receipt is not None:
+        context_parts.append(f"Average Receipt: {organization.average_receipt}")
+    if organization.context:
+        context_parts.append(f"Additional Context: {organization.context}")
+
+    organization_context = '\n'.join(context_parts)
+
+    system_prompt = f"{assistant_prompt}\n\nOrganization Context:\n{organization_context}"
+
+    return system_prompt

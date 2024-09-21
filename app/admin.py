@@ -144,7 +144,7 @@ class RefreshSessionAdmin(ModelView, model=RefreshSession):
 class UserAdmin(ModelView, model=User):
     can_create = True
     can_edit = True
-    can_delete = True
+    can_delete = False
     can_view_details = True
 
     icon = "fa-solid fa-user"

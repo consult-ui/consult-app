@@ -17,6 +17,7 @@ class Chat(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
+    organization_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("organizations.id"), nullable=True)
 
     name: Mapped[str] = mapped_column(Text, nullable=False)
     desc: Mapped[str] = mapped_column(Text, nullable=False, default="")
