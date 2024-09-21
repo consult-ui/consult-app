@@ -53,10 +53,16 @@ async def get_active_user(id: CurrentUserIdDep, db_session: DBSessionDep) -> Use
 ActiveUserDep = Annotated[User, Depends(get_active_user)]
 
 
-async def get_organization_id(x_org_id: Annotated[str | None, Header()] = None) -> Optional[int]:
+async def get_organization_id(user: ActiveUserDep, x_org_id: Annotated[str | None, Header()] = None) -> Optional[int]:
     if not x_org_id:
         return None
-    return int(x_org_id)
+
+    orgid = int(x_org_id)
+    
+    if orgid not in [org.id for org in user.organizations]:
+        raise NotFoundError("организация не найдена")
+
+    return orgid
 
 
 OrganizationIdDep = Annotated[Optional[int], Depends(get_organization_id)]
