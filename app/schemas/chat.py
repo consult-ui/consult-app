@@ -4,6 +4,11 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class UpdateChatRequest(BaseModel):
+    name: Optional[str] = None
+    color: Optional[str] = None
+
+
 class CreateChatRequest(BaseModel):
     assistant_id: Optional[int] = None
 

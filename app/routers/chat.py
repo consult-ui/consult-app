@@ -9,10 +9,10 @@ from app.dependencies import ActiveUserDep, DBSessionDep, OrganizationIdDep
 from app.exceptions import NotFoundError
 from app.models.chat import Chat
 from app.schemas.assistant import PublicAssistant
-from app.schemas.chat import CreateChatRequest, PublicChat
+from app.schemas.chat import CreateChatRequest, UpdateChatRequest, PublicChat
 from app.schemas.response import BaseResponse
 from app.utils.assistant import make_public_assistants
-from app.utils.chat import make_public_chats
+from app.utils.chat import make_public_chats, make_public_chat
 
 router = APIRouter(
     prefix="/chat",
@@ -23,6 +23,34 @@ router = APIRouter(
 @router.post("/create")
 async def create_chat(user: ActiveUserDep, req: CreateChatRequest) -> BaseResponse[PublicChat]:
     pass
+
+
+@router.post("/{chat_id}/update")
+async def update_chat(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        chat_id: int,
+        req: UpdateChatRequest,
+) -> BaseResponse[PublicChat]:
+    chat = await db_session.get(Chat, chat_id)
+    if not chat:
+        raise NotFoundError("чат не найден")
+
+    if chat.user_id != user.id:
+        raise NotFoundError("чат не найден")
+
+    if req.name:
+        chat.name = req.name
+    if req.color:
+        chat.color = req.color
+
+    await db_session.commit()
+
+    return BaseResponse(
+        success=True,
+        msg="чат обновлен",
+        data=make_public_chat(chat),
+    )
 
 
 @router.post("/{chat_id}/delete")
