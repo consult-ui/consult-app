@@ -2,10 +2,7 @@ from typing import List
 
 from fastapi import APIRouter
 
-from app.dependencies import (
-    ActiveUserDep,
-)
-from app.dependencies import DBSessionDep
+from app.dependencies import DBSessionDep, ActiveUserDep
 from app.exceptions import BadRequestError, NotFoundError
 from app.models.organization import Organization
 from app.schemas.organization import (
