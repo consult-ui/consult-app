@@ -82,6 +82,8 @@ async def delete_chat(
 
     await db_session.delete(chat)
 
+    await db_session.commit()
+
     return BaseResponse(success=True, msg="чат удален")
 
 
