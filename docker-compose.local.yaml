@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres
+    container_name: consult-db
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  app:
+    container_name: consult-back
+    restart: always
+    build: .
+    env_file:
+      - .env.local
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    healthcheck:
+      test: curl --fail http://localhost:8080/ping || exit 1
+      interval: 5s
+      timeout: 5s
+      start_period: 5s
+      retries: 2
+
+volumes:
+  db-data:

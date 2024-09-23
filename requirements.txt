@@ -92,3 +92,8 @@ yarl==1.9.4
 clickhouse_connect==0.7.18
 humanize~=4.10.0
 aiosmtplib~=3.0.2
+pytest==8.3.3
+jsonschema==4.23.0
+isort==5.13.2
+allure-pytest==2.13.5
+curlify2==2.0.0
