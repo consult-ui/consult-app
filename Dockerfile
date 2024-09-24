@@ -1,16 +1,38 @@
-FROM python:3.12.4
+FROM python:3.12-slim as builder 
 
-WORKDIR /workdir
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
 
-COPY ./requirements.txt /code/requirements.txt
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+    gcc python3-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update &&  \
-    apt-get install libpq-dev -y
+COPY requirements.txt . 
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir --target=/install -r requirements.txt
 
-COPY . /workdir/
+FROM python:3.12-slim
 
-CMD alembic upgrade head && \
-    uvicorn app.main:app --port $PORT --forwarded-allow-ips='*' --proxy-headers --host=0.0.0.0 --log-level warning
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/install
+
+COPY --from=builder /install /install
+COPY . /app
+
+WORKDIR /app
+
+RUN useradd --no-log-init -M appuser && \
+    chown -R appuser /app && \ 
+    chmod +x /app/start.sh 
+
+ENV PATH="/install/bin:$PATH"
+
+USER appuser
+
+EXPOSE 8080
+
+CMD ["sh", "/app/start.sh"]
