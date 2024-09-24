@@ -1,23 +1,52 @@
-from sqlalchemy import Text, TIMESTAMP, BigInteger, Boolean
-from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
-from sqlalchemy.sql import func
+from fastapi import APIRouter
+from pydantic import EmailStr
 
-from app.db import Base
+from app.dependencies import DBSessionDep
+from app.exceptions import BadRequestError
+from app.models.form import ContactRequest
+from app.schemas.response import BaseResponse
+
+router = APIRouter(
+    prefix="/form",
+    tags=["forms"],
+)
 
 
-class Form_user(Base):
-    __tablename__ = "form_user"
+@router.post("/submit_form")
+async def submit_form(
+    db_session: DBSessionDep,
+    first_name: str,
+    last_name: str,
+    email: EmailStr = None,
+    phone_number: str = None,
+) -> BaseResponse:
+    if not first_name or not last_name:
+        raise BadRequestError("ФИО является обязательным полем")
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    first_name: Mapped[str] = mapped_column(Text, nullable=False)
-    last_name: Mapped[str] = mapped_column(Text, nullable=False)
-    email: Mapped[str] = mapped_column(Text, nullable=True)
-    phone_number: Mapped[str] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False, default=func.now()
+    form_user = ContactRequest(
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        phone_number=phone_number
     )
-    is_processed: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} <{self.email}>"
+    db_session.add(form_user)
+
+    await db_session.commit()
+
+    await db_session.refresh(form_user)
+
+    message = (
+        f"Новая заявка:\n"
+        f"ФИО: {form_user.first_name} {form_user.last_name}\n"
+        f"Email: {form_user.email or 'не указан'}\n"
+        f"Телефон: {form_user.phone_number or 'не указан'}"
+    )
+
+    # send_telegram_message(message)    тут надо как то телегу реализовать
+
+    return BaseResponse(
+        success=True,
+        msg="ok")
+
+

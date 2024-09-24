@@ -6,8 +6,8 @@ from sqlalchemy.sql import func
 from app.db import Base
 
 
-class Form_user(Base):
-    __tablename__ = "form_user"
+class ContactRequest(Base):
+    __tablename__ = "contact_request"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     first_name: Mapped[str] = mapped_column(Text, nullable=False)
