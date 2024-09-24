@@ -21,12 +21,6 @@ services:
       - 8080:8080
     depends_on:
       - db
-    healthcheck:
-      test: curl --fail http://localhost:8080/ping || exit 1
-      interval: 5s
-      timeout: 5s
-      start_period: 5s
-      retries: 2
 
 volumes:
   db-data:
