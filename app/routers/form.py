@@ -1,12 +1,13 @@
 from fastapi import APIRouter
 from pydantic import EmailStr
+from loguru import logger
 
 from app.dependencies import DBSessionDep
 from app.exceptions import BadRequestError
 from app.models.form import ContactRequest
 from app.schemas.form import ContactFormRequest
 from app.schemas.response import BaseResponse
-from app.service.telegram_service import send_telegram_message
+from app.service.telegram import tgclient
 
 router = APIRouter(
     prefix="/form",
@@ -43,9 +44,9 @@ async def submit_form(
     )
 
     try:
-        send_telegram_message(message)
+        await tgclient.send_message(message)
     except Exception as e:
-        print(f"Ошибка при отправке сообщения в Telegram: {e}")
+        logger.error(f"Ошибка при отправке сообщения в Telegram: {e}")
 
     return BaseResponse(
         success=True,

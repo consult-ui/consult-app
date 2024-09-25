@@ -182,7 +182,7 @@ class UserAdmin(ModelView, model=User):
     )
 
 
-class FormUserAdmin(ModelView, model=ContactRequest):
+class ContactRequestAdmin(ModelView, model=ContactRequest):
     can_create = False
     can_edit = True
     can_delete = False
@@ -198,7 +198,7 @@ class FormUserAdmin(ModelView, model=ContactRequest):
     page_size = 25
     page_size_options = [25, 50, 100, 200]
 
-    form_columns = [
+    contact_request_columns = [
         ContactRequest.first_name,
         ContactRequest.last_name,
         ContactRequest.email,
@@ -207,7 +207,7 @@ class FormUserAdmin(ModelView, model=ContactRequest):
         ContactRequest.is_processed
     ]
 
-    form_args = dict(
+    contact_request_args = dict(
         email=dict(
             label="Email",
         ),
@@ -222,9 +222,9 @@ class FormUserAdmin(ModelView, model=ContactRequest):
 def action_mark_processed(self, ids):
     try:
         for id in ids:
-            form_user = self.get_one(id)
-            if form_user:
-                form_user.is_processed = True
+            contact_request_user = self.get_one(id)
+            if contact_request_user:
+                contact_request_user.is_processed = True
                 self.session.commit()
         self.flash('Заявки успешно помечены как обработанные.')
     except Exception as e:
