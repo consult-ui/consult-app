@@ -4,7 +4,9 @@ from pydantic import EmailStr
 from app.dependencies import DBSessionDep
 from app.exceptions import BadRequestError
 from app.models.form import ContactRequest
+from app.schemas.form import ContactFormRequest
 from app.schemas.response import BaseResponse
+from app.service.telegram_service import send_telegram_message
 
 router = APIRouter(
     prefix="/form",
@@ -12,41 +14,39 @@ router = APIRouter(
 )
 
 
-@router.post("/submit_form")
+@router.post("/submit-form")
 async def submit_form(
     db_session: DBSessionDep,
-    first_name: str,
-    last_name: str,
-    email: EmailStr = None,
-    phone_number: str = None,
+    req: ContactFormRequest,
 ) -> BaseResponse:
-    if not first_name or not last_name:
+    if not req.first_name or not req.last_name:
         raise BadRequestError("ФИО является обязательным полем")
 
-    form_user = ContactRequest(
-        first_name=first_name,
-        last_name=last_name,
-        email=email,
-        phone_number=phone_number
+    contact_request = ContactRequest(
+        first_name=req.first_name,
+        last_name=req.last_name,
+        email=req.email,
+        phone_number=req.phone_number
     )
 
-    db_session.add(form_user)
+    db_session.add(contact_request)
 
     await db_session.commit()
 
-    await db_session.refresh(form_user)
+    await db_session.refresh(contact_request)
 
     message = (
         f"Новая заявка:\n"
-        f"ФИО: {form_user.first_name} {form_user.last_name}\n"
-        f"Email: {form_user.email or 'не указан'}\n"
-        f"Телефон: {form_user.phone_number or 'не указан'}"
+        f"ФИО: {contact_request.first_name} {contact_request.last_name}\n"
+        f"Email: {contact_request.email or 'не указан'}\n"
+        f"Телефон: {contact_request.phone_number or 'не указан'}"
     )
 
-    # send_telegram_message(message)    тут надо как то телегу реализовать
+    try:
+        send_telegram_message(message)
+    except Exception as e:
+        print(f"Ошибка при отправке сообщения в Telegram: {e}")
 
     return BaseResponse(
         success=True,
         msg="ok")
-
-
