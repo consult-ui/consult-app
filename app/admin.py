@@ -190,7 +190,7 @@ class ContactRequestAdmin(ModelView, model=ContactRequest):
 
     icon = "fa-solid fa-poll-people"
 
-    column_searchable_list = ["first_name", "last_name", "email", "phone_number"]
+    column_searchable_list = ["name", "email", "phone_number"]
     column_sortable_list = ["id", "created_at", "is_processed"]
 
     column_exclude_list = []
@@ -199,8 +199,7 @@ class ContactRequestAdmin(ModelView, model=ContactRequest):
     page_size_options = [25, 50, 100, 200]
 
     contact_request_columns = [
-        ContactRequest.first_name,
-        ContactRequest.last_name,
+        ContactRequest.name,
         ContactRequest.email,
         ContactRequest.phone_number,
         ContactRequest.created_at,

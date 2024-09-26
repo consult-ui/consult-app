@@ -20,12 +20,12 @@ async def submit_form(
     db_session: DBSessionDep,
     req: ContactFormRequest,
 ) -> BaseResponse:
-    if not req.first_name or not req.last_name:
-        raise BadRequestError("ФИО является обязательным полем")
+
+    if not req.email and not req.phone_number:
+        raise BadRequestError("Email or phone is required")
 
     contact_request = ContactRequest(
-        first_name=req.first_name,
-        last_name=req.last_name,
+        name=req.name,
         email=req.email,
         phone_number=req.phone_number
     )
@@ -38,7 +38,7 @@ async def submit_form(
 
     message = (
         f"Новая заявка:\n"
-        f"ФИО: {contact_request.first_name} {contact_request.last_name}\n"
+        f"ФИО: {contact_request.name}\n"
         f"Email: {contact_request.email or 'не указан'}\n"
         f"Телефон: {contact_request.phone_number or 'не указан'}"
     )
