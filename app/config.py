@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     telegram_api_key: str
     telegram_chat_id: str
 
+    PORT: int
+
     # s3_endpoint: str
     # s3_cdn_endpoint: str
     # s3_secret_key: str
