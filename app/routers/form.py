@@ -25,7 +25,7 @@ async def submit_form(
     contact_request = ContactRequest(
         name=req.name,
         email=req.email or None,
-        phone_number=req.phone_number
+        phone_number=req.phone_number or None
     )
 
     db_session.add(contact_request)
