@@ -24,7 +24,7 @@ async def submit_form(
 
     contact_request = ContactRequest(
         name=req.name,
-        email=req.email,
+        email=req.email or None,
         phone_number=req.phone_number
     )
 
