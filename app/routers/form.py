@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from pydantic import EmailStr
 from loguru import logger
 
 from app.dependencies import DBSessionDep
@@ -17,10 +16,9 @@ router = APIRouter(
 
 @router.post("/submit-form")
 async def submit_form(
-    db_session: DBSessionDep,
-    req: ContactFormRequest,
+        db_session: DBSessionDep,
+        req: ContactFormRequest,
 ) -> BaseResponse:
-
     if not req.email and not req.phone_number:
         raise BadRequestError("Email or phone is required")
 
