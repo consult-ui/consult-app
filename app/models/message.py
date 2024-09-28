@@ -28,13 +28,11 @@ class ImageFileParam(TypedDict, total=False):
 
 class ImageFileContentBlockParam(TypedDict, total=False):
     image_file: Required[ImageFileParam]
-
     type: Required[Literal["image_file"]]
 
 
 class TextContentBlockParam(TypedDict, total=False):
     text: Required[str]
-
     type: Required[Literal["text"]]
 
 
