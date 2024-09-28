@@ -26,15 +26,7 @@ async def create_default_chat(db_session: AsyncSession, user: User, org_id: Opti
         system_prompt=make_system_prompt(user, org_id, default_chat),
     )
 
-    assistant = await openai_client.beta.assistants.create(
-        model="gpt-4o",
-        tools=[{"type": "file_search"}],
-        name=chat.name,
-        description=chat.desc,
-        instructions=chat.system_prompt,
-    )
-
-    chat.openai_assistant_id = assistant.id
+    await obtain_openai_assistant(chat)
 
     db_session.add(chat)
 
@@ -60,15 +52,7 @@ async def create_chat(db_session: AsyncSession, user: User, org_id: Optional[int
         system_prompt=make_system_prompt(user, org_id, assistant.instruction),
     )
 
-    assistant = await openai_client.beta.assistants.create(
-        model="gpt-4o",
-        tools=[{"type": "file_search"}],
-        name=chat.name,
-        description=chat.desc,
-        instructions=chat.system_prompt,
-    )
-
-    chat.openai_assistant_id = assistant.id
+    await obtain_openai_assistant(chat)
 
     db_session.add(chat)
 
@@ -77,6 +61,17 @@ async def create_chat(db_session: AsyncSession, user: User, org_id: Optional[int
     await db_session.refresh(chat)
 
     return chat
+
+
+async def obtain_openai_assistant(chat: Chat) -> None:
+    assistant = await openai_client.beta.assistants.create(
+        model="gpt-4o",
+        tools=[{"type": "file_search"}],
+        name=chat.name,
+        description=chat.desc,
+        instructions=chat.system_prompt,
+    )
+    chat.openai_assistant_id = assistant.id
 
 
 def make_system_prompt(user: User, organization_id: Optional[int], assistant_prompt: str) -> str:
