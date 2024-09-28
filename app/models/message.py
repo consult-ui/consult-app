@@ -33,4 +33,4 @@ class Message(Base):
     )
 
     def __str__(self):
-        return self.name
+        return f"{self.role}:{self.id}"

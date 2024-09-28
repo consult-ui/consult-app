@@ -1,3 +1,4 @@
+import pathlib
 from typing import List
 
 import humanize
@@ -5,7 +6,7 @@ from fastapi import APIRouter, UploadFile
 from loguru import logger
 
 import app.service.chat as service
-from app.config import MAX_FILE_SIZE
+from app.config import MAX_FILE_SIZE, MAX_IMAGE_SIZE
 from app.crud.assistant import get_all_assistants
 from app.crud.chat import get_user_organization_chats
 from app.dependencies import ActiveUserDep, DBSessionDep, OrganizationIdDep
@@ -102,9 +103,17 @@ async def upload_file(
         chat_id: int,
         upload: UploadFile
 ) -> BaseResponse[PublicFile]:
-    if upload.size > MAX_FILE_SIZE:
-        raise BadRequestError(
-            f"файл {upload.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_FILE_SIZE)}")
+    ext = pathlib.Path(upload.filename).suffix
+    if ext in [".png", ".jpeg", ".jpg", ".webp", ".gif"]:
+        if upload.size > MAX_IMAGE_SIZE:
+            raise BadRequestError(
+                f"медиа файл {upload.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_IMAGE_SIZE)}")
+        purpose = "vision"
+    else:
+        if upload.size > MAX_FILE_SIZE:
+            raise BadRequestError(
+                f"файл {upload.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_FILE_SIZE)}")
+        purpose = "assistants"
 
     chat = await db_session.get(Chat, chat_id)
     if not chat:
@@ -115,7 +124,7 @@ async def upload_file(
 
     try:
         obj = await openai_client.files.create(file=(upload.filename, upload.file, upload.content_type, upload.headers),
-                                               purpose="assistants")
+                                               purpose=purpose)
     except Exception as e:
         logger.error(f"ошибка загрузки файла: {e}")
         raise BadRequestError(f"ошибка загрузки файла")
