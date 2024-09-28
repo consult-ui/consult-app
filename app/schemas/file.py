@@ -9,3 +9,7 @@ class PublicFile(BaseModel):
     name: str
     size: int
     created_at: datetime
+
+
+class DeleteFileRequest(BaseModel):
+    file_id: uuid.UUID

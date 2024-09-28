@@ -15,6 +15,7 @@ from app.models.chat import Chat
 from app.models.file import File
 from app.schemas.assistant import PublicAssistant
 from app.schemas.chat import CreateChatRequest, UpdateChatRequest, PublicChat
+from app.schemas.file import DeleteFileRequest
 from app.schemas.file import PublicFile
 from app.schemas.response import BaseResponse
 from app.service.openai import openai_client
@@ -94,7 +95,7 @@ async def delete_chat(
     return BaseResponse(success=True, msg="чат удален")
 
 
-@router.post("/{chat_id}/upload")
+@router.post("/{chat_id}/upload-file")
 async def upload_file(
         db_session: DBSessionDep,
         user: ActiveUserDep,
@@ -141,6 +142,41 @@ async def upload_file(
             created_at=file.created_at
         ),
     )
+
+
+@router.post("/{chat_id}/delete-file")
+async def delete_file(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        chat_id: int,
+        req: DeleteFileRequest,
+) -> BaseResponse:
+    chat = await db_session.get(Chat, chat_id)
+    if not chat:
+        raise NotFoundError("чат не найден")
+
+    if chat.user_id != user.id:
+        raise NotFoundError("чат не найден")
+
+    file = await db_session.get(File, req.file_id)
+    if not file:
+        raise NotFoundError("файл не найден")
+
+    if file.chat_id != chat_id:
+        raise NotFoundError("файл не найден")
+
+    try:
+        res = await openai_client.files.delete(file_id=file.openai_id)
+        if res.deleted:
+            logger.info(f"файл удален: {file.openai_id}")
+    except Exception as e:
+        logger.error(f"ошибка удаления файла: {e}")
+
+    await db_session.delete(file)
+
+    await db_session.commit()
+
+    return BaseResponse(success=True, msg="файл удален")
 
 
 @router.get("/list")
