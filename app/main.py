@@ -9,6 +9,7 @@ from sqladmin import Admin
 
 import app.routers.auth as auth
 import app.routers.chat as chat
+import app.routers.contact as contact
 import app.routers.organization as organization
 import app.routers.user as user
 from app.admins.assistant import AssistantAdmin
@@ -21,7 +22,6 @@ from app.admins.refresh_session import RefreshSessionAdmin
 from app.admins.user import UserAdmin
 from app.config import settings, STATIC_FOLDER
 from app.exceptions import register_exception_handlers
-from app.routers.form import router as form_router
 from app.utils.auth import AdminAuth
 from app.utils.db import sessionmanager
 
@@ -73,7 +73,7 @@ app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(organization.router)
 app.include_router(chat.router)
-app.include_router(form_router)
+app.include_router(contact.router)
 
 admin = Admin(
     app=app,
