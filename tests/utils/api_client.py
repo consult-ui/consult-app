@@ -3,12 +3,11 @@ import json
 import allure
 import requests
 from allure_commons.types import AttachmentType
+from consult.config import settings
 from curlify2 import Curlify
 from loguru import logger
 from requests import Response
-
 from utils.api_response import APIResponse
-from consult.config import settings
 
 
 class APIClient:
@@ -28,7 +27,7 @@ class APIClient:
 
     @staticmethod
     def send_request(response: Response):
-        logger.critical(f"headers: {response.request.headers}")
+
         if response.request.headers:
             allure.attach(
                 body=str(response.request.headers),
@@ -90,6 +89,7 @@ class APIClient:
         params=None,
         headers=None,
         attach=True,
+        cookies=None,
     ):
         response = requests.request(
             method,
@@ -98,6 +98,7 @@ class APIClient:
             data=data,
             params=params,
             headers=headers,
+            cookies=cookies,
         )
 
         self.response_logging(response)

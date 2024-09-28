@@ -1,8 +1,11 @@
-from utils.api_client import client
 from http import HTTPStatus
+
 from allure import title
+from utils.api_client import client
 
 title("/ping | GET")
+
+
 def test_default():
     response = client.make_request(
         handle="/ping",
