@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.add_column('messages', sa.Column('openai_id', sa.Text(), nullable=False))
-    op.alter_column('messages', 'content', type_=JSONB(), nullable=False)
+    op.execute("alter table messages alter column content type jsonb using content::jsonb")
 
 
 def downgrade() -> None:
