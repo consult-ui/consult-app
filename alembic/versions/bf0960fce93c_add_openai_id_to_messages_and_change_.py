@@ -9,6 +9,7 @@ from typing import Sequence, Union
 
 import sqlalchemy as sa
 from alembic import op
+from sqlalchemy.dialects.postgresql import JSONB
 
 # revision identifiers, used by Alembic.
 revision: str = 'bf0960fce93c'
@@ -19,9 +20,9 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.add_column('messages', sa.Column('openai_id', sa.Text(), nullable=False))
-    op.alter_column('messages', 'content', type_=sa.JSONB(), nullable=False)
+    op.alter_column('messages', 'content', type_=JSONB(), nullable=False)
 
 
 def downgrade() -> None:
     op.drop_column('messages', 'openai_id')
-    op.alter_column('messages', 'content', type_=sa.JSONB(), nullable=False)
+    op.alter_column('messages', 'content', type_=JSONB(), nullable=False)
