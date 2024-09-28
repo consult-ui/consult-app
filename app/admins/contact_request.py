@@ -9,7 +9,7 @@ class ContactRequestAdmin(ModelView, model=ContactRequest):
     can_delete = False
     can_view_details = True
 
-    icon = "fa-solid fa-poll-people"
+    icon = "fa-solid fa-envelope"
 
     column_searchable_list = ["name", "email", "phone_number"]
     column_sortable_list = ["id", "created_at", "is_processed"]
