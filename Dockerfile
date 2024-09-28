@@ -26,13 +26,13 @@ COPY . /app
 WORKDIR /app
 
 RUN useradd --no-log-init -M appuser && \
-    chown -R appuser /app && \ 
+    chown -R appuser /app && \
     chmod +x /app/start.sh 
 
 ENV PATH="/install/bin:$PATH"
 
 USER appuser
 
-EXPOSE 8080
+EXPOSE $PORT
 
 CMD ["sh", "/app/start.sh"]
