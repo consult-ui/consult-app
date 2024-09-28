@@ -11,6 +11,8 @@ class ContactRequestAdmin(ModelView, model=ContactRequest):
 
     icon = "fa-solid fa-envelope"
 
+    column_list = "__all__"
+
     column_searchable_list = ["name", "email", "phone_number"]
     column_sortable_list = ["id", "created_at", "is_processed"]
 
