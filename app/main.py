@@ -14,7 +14,7 @@ import app.routers.organization as organization
 import app.routers.user as user
 from app.admins.assistant import AssistantAdmin
 from app.admins.chat import ChatAdmin
-from app.admins.contact_request import ContactRequestAdmin
+from app.admins.contact import ContactRequestAdmin
 from app.admins.file import FileAdmin
 from app.admins.message import MessageAdmin
 from app.admins.organization import OrganizationAdmin
