@@ -188,6 +188,22 @@ async def delete_file(
     return BaseResponse(success=True, msg="файл удален")
 
 
+@router.post("/{chat_id}/send")
+async def send_message(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        chat_id: int,
+) -> BaseResponse:
+    chat = await db_session.get(Chat, chat_id)
+    if not chat:
+        raise NotFoundError("чат не найден")
+
+    if chat.user_id != user.id:
+        raise NotFoundError("чат не найден")
+
+    pass
+
+
 @router.get("/list")
 async def list_chats(
         db_session: DBSessionDep,
