@@ -39,6 +39,22 @@ class TextContentBlockParam(TypedDict, total=False):
 MessageContentPartParam: TypeAlias = Union[ImageFileContentBlockParam, TextContentBlockParam]
 
 
+class CodeInterpreterTool(TypedDict, total=False):
+    type: Literal["code_interpreter"]
+
+
+class AttachmentToolAssistantToolsFileSearchTypeOnly(TypedDict, total=False):
+    type: Literal["file_search"]
+
+
+AttachmentTool: TypeAlias = Union[CodeInterpreterTool, AttachmentToolAssistantToolsFileSearchTypeOnly]
+
+
+class Attachment(TypedDict, total=False):
+    file_id: str
+    tools: List[AttachmentTool]
+
+
 class Message(Base):
     __tablename__ = "messages"
 
@@ -49,6 +65,7 @@ class Message(Base):
 
     role: Mapped[MessageRole] = mapped_column(Text, nullable=False)
     content: Mapped[List[MessageContentPartParam]] = mapped_column(JSONB, nullable=False)
+    attachments: Mapped[List[Attachment]] = mapped_column(JSONB, nullable=False, default=lambda _: [])
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
