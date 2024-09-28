@@ -1,8 +1,8 @@
 from typing import List
-from venv import logger
 
 import humanize
 from fastapi import APIRouter, UploadFile
+from loguru import logger
 
 import app.service.chat as service
 from app.config import MAX_FILE_SIZE
