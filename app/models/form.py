@@ -1,9 +1,10 @@
+from datetime import datetime
+
 from sqlalchemy import Text, TIMESTAMP, BigInteger, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
 from sqlalchemy.sql import func
 
-from app.db import Base
+from app.models.base import Base
 
 
 class ContactRequest(Base):
@@ -13,10 +14,11 @@ class ContactRequest(Base):
     name: Mapped[str] = mapped_column(Text, nullable=True)
     email: Mapped[str] = mapped_column(Text, nullable=True)
     phone_number: Mapped[str] = mapped_column(Text, nullable=True)
+    is_processed: Mapped[bool] = mapped_column(Boolean, default=False)
+
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
     )
-    is_processed: Mapped[bool] = mapped_column(Boolean, default=False)
 
     def __str__(self):
-        return f"{self.name} <{self.email}>"
+        return f"{self.name} <{self.email}> {self.phone_number}"

@@ -1,17 +1,16 @@
 import contextlib
 from typing import Any, AsyncIterator
 
-from app.config import settings
 from sqlalchemy.ext.asyncio import (
     AsyncConnection,
     AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import declarative_base
+
+from app.config import settings
 from app.schemas.base import json_serializer
 
-Base = declarative_base()
 
 # Heavily inspired by https://praciano.com.br/fastapi-and-async-sqlalchemy-20-with-pytest-done-right.html
 
@@ -78,8 +77,3 @@ sessionmanager = DatabaseSessionManager(
         "max_overflow": 5,
     },
 )
-
-
-async def get_db_session():
-    async with sessionmanager.session() as session:
-        yield session

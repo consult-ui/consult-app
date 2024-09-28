@@ -11,12 +11,19 @@ import app.routers.auth as auth
 import app.routers.chat as chat
 import app.routers.organization as organization
 import app.routers.user as user
-from app.admin import AdminAuth, UserAdmin, RefreshSessionAdmin, OrganizationAdmin, ChatAdmin, MessageAdmin, \
-    AssistantAdmin, ContactRequestAdmin
+from app.admins.assistant import AssistantAdmin
+from app.admins.chat import ChatAdmin
+from app.admins.contact_request import ContactRequestAdmin
+from app.admins.message import MessageAdmin
+from app.admins.organization import OrganizationAdmin
+from app.admins.refresh_session import RefreshSessionAdmin
+from app.admins.user import UserAdmin
 from app.config import settings, STATIC_FOLDER
-from app.db import sessionmanager
 from app.exceptions import register_exception_handlers
 from app.routers.form import router as form_router
+from app.utils.auth import AdminAuth
+from app.utils.db import sessionmanager
+
 uvloop.install()
 
 

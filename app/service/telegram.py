@@ -1,5 +1,6 @@
 import httpx
 from loguru import logger
+
 from app.config import settings
 
 
@@ -21,8 +22,7 @@ class Telegram:
         }
         response = await self.client.post(url, json=payload)
         if response.status_code != 200:
-            logger.error(f"Ошибка отправки сообщения: {response.status_code} - {response.text}")
-
+            logger.error(f"ошибка отправки сообщения: {response.status_code} - {response.text}")
 
 
 tgclient = Telegram()

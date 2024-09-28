@@ -9,7 +9,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import mapped_column, Mapped
 
-from app.db import Base
+from app.models.base import Base
 
 
 class Chat(Base):
