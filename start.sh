@@ -1,4 +1,4 @@
-MIGRATIONS_PATH="./alembic/versions"
+MIGRATIONS_PATH="/alembic/versions"
 DB_RUN_AUTO_MIGRATE=True
 
 if [ "$DB_RUN_AUTO_MIGRATE" = "True" ]; then
