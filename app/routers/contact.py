@@ -3,14 +3,14 @@ from loguru import logger
 
 from app.dependencies import DBSessionDep
 from app.exceptions import BadRequestError
-from app.models.form import ContactRequest
-from app.schemas.form import ContactFormRequest
+from app.models.contact import ContactRequest
+from app.schemas.contact import ContactFormRequest
 from app.schemas.response import BaseResponse
 from app.service.telegram import tgclient
 
 router = APIRouter(
-    prefix="/form",
-    tags=["forms"],
+    prefix="/contact",
+    tags=["contact"],
 )
 
 
@@ -44,7 +44,7 @@ async def submit_form(
     try:
         await tgclient.send_message(message)
     except Exception as e:
-        logger.error(f"Ошибка при отправке сообщения в Telegram: {e}")
+        logger.error(f"ошибка при отправке сообщения в Telegram: {e}")
 
     return BaseResponse(
         success=True,
