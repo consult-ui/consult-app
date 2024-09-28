@@ -103,7 +103,7 @@ async def upload_file(
 ) -> BaseResponse[PublicFile]:
     if file.size > MAX_FILE_SIZE:
         raise BadRequestError(
-            f"файл {file.filename} слишком большой. Максимальный размер {humanize.naturalsize(MAX_FILE_SIZE)}")
+            f"файл {file.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_FILE_SIZE)}")
 
     chat = await db_session.get(Chat, chat_id)
     if not chat:
