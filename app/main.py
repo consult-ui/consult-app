@@ -14,6 +14,7 @@ import app.routers.user as user
 from app.admins.assistant import AssistantAdmin
 from app.admins.chat import ChatAdmin
 from app.admins.contact_request import ContactRequestAdmin
+from app.admins.file import FileAdmin
 from app.admins.message import MessageAdmin
 from app.admins.organization import OrganizationAdmin
 from app.admins.refresh_session import RefreshSessionAdmin
@@ -88,3 +89,4 @@ admin.add_view(ChatAdmin)
 admin.add_view(MessageAdmin)
 admin.add_view(AssistantAdmin)
 admin.add_view(ContactRequestAdmin)
+admin.add_view(FileAdmin)
