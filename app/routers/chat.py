@@ -100,11 +100,11 @@ async def upload_file(
         db_session: DBSessionDep,
         user: ActiveUserDep,
         chat_id: int,
-        file: UploadFile
+        upload: UploadFile
 ) -> BaseResponse[PublicFile]:
-    if file.size > MAX_FILE_SIZE:
+    if upload.size > MAX_FILE_SIZE:
         raise BadRequestError(
-            f"файл {file.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_FILE_SIZE)}")
+            f"файл {upload.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_FILE_SIZE)}")
 
     chat = await db_session.get(Chat, chat_id)
     if not chat:
@@ -114,7 +114,7 @@ async def upload_file(
         raise NotFoundError("чат не найден")
 
     try:
-        obj = await openai_client.files.create(file=(file.filename, file.file, file.content_type, file.headers),
+        obj = await openai_client.files.create(file=(upload.filename, upload.file, upload.content_type, upload.headers),
                                                purpose="assistants")
     except Exception as e:
         logger.error(f"ошибка загрузки файла: {e}")
@@ -122,9 +122,9 @@ async def upload_file(
 
     file = File(
         chat_id=chat_id,
-        name=file.filename,
+        name=upload.filename,
         openai_id=obj.id,
-        size=file.size,
+        size=upload.size,
     )
 
     db_session.add(file)
