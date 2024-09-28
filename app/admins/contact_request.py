@@ -1,6 +1,6 @@
 from sqladmin import ModelView, action
 
-from app.models.form import ContactRequest
+from app.models.contact import ContactRequest
 
 
 class ContactRequestAdmin(ModelView, model=ContactRequest):
@@ -15,8 +15,6 @@ class ContactRequestAdmin(ModelView, model=ContactRequest):
 
     column_searchable_list = ["name", "email", "phone_number"]
     column_sortable_list = ["id", "created_at", "is_processed"]
-
-    column_exclude_list = []
 
     page_size = 25
     page_size_options = [25, 50, 100, 200]
