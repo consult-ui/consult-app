@@ -104,7 +104,7 @@ async def upload_file(
         upload: UploadFile
 ) -> BaseResponse[PublicFile]:
     ext = pathlib.Path(upload.filename).suffix
-    if ext in [".png", ".jpeg", ".jpg", ".webp", ".gif"]:
+    if ext in {".png", ".jpeg", ".jpg", ".webp", ".gif"}:
         if upload.size > MAX_IMAGE_SIZE:
             raise BadRequestError(
                 f"медиа файл {upload.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_IMAGE_SIZE)}")
