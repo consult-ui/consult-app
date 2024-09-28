@@ -27,6 +27,8 @@ class Chat(Base):
 
     system_prompt: Mapped[str] = mapped_column(Text, nullable=False)
 
+    openai_assistant_id: Mapped[str] = mapped_column(Text, nullable=False)
+
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
     )

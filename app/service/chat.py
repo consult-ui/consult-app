@@ -8,6 +8,7 @@ from app.models.assistant import Assistant
 from app.models.chat import Chat
 from app.models.user import User
 from app.prompts.default import default_chat
+from app.service.openai import openai_client
 
 
 async def add_org_context_to_user_chats(db_session: AsyncSession, user: User, org_id: int) -> None:
@@ -24,6 +25,17 @@ async def create_default_chat(db_session: AsyncSession, user: User, org_id: Opti
         desc="Стандартный чат для общих вопросов",
         system_prompt=make_system_prompt(user, org_id, default_chat),
     )
+
+    assistant = await openai_client.beta.assistants.create(
+        model="gpt-4o",
+        tools=[{"type": "file_search"}],
+        name=chat.name,
+        description=chat.desc,
+        instructions=chat.system_prompt,
+    )
+
+    chat.openai_assistant_id = assistant.id
+
     db_session.add(chat)
 
     await db_session.commit()
@@ -47,6 +59,17 @@ async def create_chat(db_session: AsyncSession, user: User, org_id: Optional[int
         icon_url=assistant.icon_url,
         system_prompt=make_system_prompt(user, org_id, assistant.instruction),
     )
+
+    assistant = await openai_client.beta.assistants.create(
+        model="gpt-4o",
+        tools=[{"type": "file_search"}],
+        name=chat.name,
+        description=chat.desc,
+        instructions=chat.system_prompt,
+    )
+
+    chat.openai_assistant_id = assistant.id
+
     db_session.add(chat)
 
     await db_session.commit()
