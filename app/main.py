@@ -9,13 +9,21 @@ from sqladmin import Admin
 
 import app.routers.auth as auth
 import app.routers.chat as chat
+import app.routers.contact as contact
 import app.routers.organization as organization
 import app.routers.user as user
-from app.admin import AdminAuth, UserAdmin, RefreshSessionAdmin, OrganizationAdmin, ChatAdmin, MessageAdmin, \
-    AssistantAdmin
+from app.admins.assistant import AssistantAdmin
+from app.admins.chat import ChatAdmin
+from app.admins.contact import ContactRequestAdmin
+from app.admins.file import FileAdmin
+from app.admins.message import MessageAdmin
+from app.admins.organization import OrganizationAdmin
+from app.admins.refresh_session import RefreshSessionAdmin
+from app.admins.user import UserAdmin
 from app.config import settings, STATIC_FOLDER
-from app.db import sessionmanager
 from app.exceptions import register_exception_handlers
+from app.utils.auth import AdminAuth
+from app.utils.db import sessionmanager
 
 uvloop.install()
 
@@ -65,6 +73,7 @@ app.include_router(user.router)
 app.include_router(auth.router)
 app.include_router(organization.router)
 app.include_router(chat.router)
+app.include_router(contact.router)
 
 admin = Admin(
     app=app,
@@ -79,3 +88,5 @@ admin.add_view(OrganizationAdmin)
 admin.add_view(ChatAdmin)
 admin.add_view(MessageAdmin)
 admin.add_view(AssistantAdmin)
+admin.add_view(ContactRequestAdmin)
+admin.add_view(FileAdmin)

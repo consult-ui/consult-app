@@ -98,3 +98,5 @@ isort==5.13.2
 allure-pytest==2.13.5
 curlify2==2.0.0
 deepdiff==8.0.1
+openai~=1.47.0
+allure-python-commons~=2.13.5

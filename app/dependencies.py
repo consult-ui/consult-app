@@ -8,10 +8,16 @@ from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
-from app.db import get_db_session
 from app.exceptions import UnauthorizedError, NotFoundError, AccessDeniedError
 from app.models.user import User
 from app.utils.auth import JWT_ALGORITHM
+from app.utils.db import sessionmanager
+
+
+async def get_db_session():
+    async with sessionmanager.session() as session:
+        yield session
+
 
 DBSessionDep = Annotated[AsyncSession, Depends(get_db_session)]
 
@@ -58,7 +64,7 @@ async def get_organization_id(user: ActiveUserDep, x_org_id: Annotated[str | Non
         return None
 
     orgid = int(x_org_id)
-    
+
     if orgid not in [org.id for org in user.organizations]:
         raise NotFoundError("организация не найдена")
 

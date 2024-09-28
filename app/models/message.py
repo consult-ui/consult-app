@@ -10,7 +10,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import mapped_column, Mapped
 
-from app.db import Base
+from app.models.base import Base
 
 
 class MessageRole(str, Enum):
@@ -33,4 +33,4 @@ class Message(Base):
     )
 
     def __str__(self):
-        return self.name
+        return f"{self.role}:{self.id}"
