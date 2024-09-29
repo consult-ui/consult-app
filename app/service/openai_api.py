@@ -56,7 +56,7 @@ class EventHandler(AsyncAssistantEventHandler):
             event = await self._event_queue.get()
             if event is None:
                 break
-            yield event
+            yield event.model_dump_json()
 
 
 async def main() -> None:
