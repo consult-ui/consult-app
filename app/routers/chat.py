@@ -265,13 +265,7 @@ async def send_message(
 
     await db_session.refresh(user_msg)
 
-    handler = EventHandler(
-        db_session=db_session,
-        chat_id=chat_id,
-        thread_id=chat.openai_thread_id,
-        user_msg_id=user_msg.id,
-        user_msg_openai_id=openai_msg.id
-    )
+    handler = EventHandler(db_session=db_session, chat_id=chat_id)
 
     async def drain_steam():
         async with openai_client.beta.threads.runs.stream(thread_id=chat.openai_thread_id,
