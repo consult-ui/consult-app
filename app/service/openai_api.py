@@ -41,7 +41,7 @@ class EventHandler(AsyncAssistantEventHandler):
     async def on_message_done(self, message) -> None:
         msg = Message(
             chat_id=self.chat_id,
-            role=MessageRole.USER,
+            role=MessageRole.ASSISTANT,
             openai_id=message.id,
             openai_message=message,
         )
