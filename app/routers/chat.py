@@ -1,14 +1,17 @@
+import asyncio
 import pathlib
 from typing import List
 
 import humanize
 from fastapi import APIRouter, UploadFile
+from fastapi.responses import StreamingResponse
 from loguru import logger
 
 import app.service.chat as service
 from app.config import MAX_FILE_SIZE, MAX_IMAGE_SIZE
 from app.crud.assistant import get_all_assistants
 from app.crud.chat import get_user_organization_chats
+from app.crud.file import get_file_by_openai_id, get_files_by_openai_ids
 from app.dependencies import ActiveUserDep, DBSessionDep, OrganizationIdDep
 from app.exceptions import BadRequestError
 from app.exceptions import NotFoundError
@@ -16,10 +19,11 @@ from app.models.chat import Chat
 from app.models.file import File
 from app.schemas.assistant import PublicAssistant
 from app.schemas.chat import CreateChatRequest, UpdateChatRequest, PublicChat
+from app.schemas.chat import SendMessageRequest
 from app.schemas.file import DeleteFileRequest
 from app.schemas.file import PublicFile
 from app.schemas.response import BaseResponse
-from app.service.openai import openai_client
+from app.service.openai_api import openai_client, EventHandler
 from app.utils.assistant import make_public_assistants
 from app.utils.chat import make_public_chats, make_public_chat
 
@@ -96,6 +100,16 @@ async def delete_chat(
     return BaseResponse(success=True, msg="чат удален")
 
 
+files_search_ext = {".c", ".cpp", ".cs", ".css", ".doc", ".docx", ".go", ".html", ".java", ".js", ".json", ".md",
+                    ".pdf", ".php", ".pptx", ".py", ".rb", ".sh", ".tex", ".ts", ".txt"}
+
+code_interpreter_ext = {".c", ".cpp", ".cs", ".css", ".csv", ".doc", ".docx", ".gif", ".html", ".java", ".jpeg", ".jpg",
+                        ".js", ".json", ".md", ".pdf", ".php", ".pkl", ".png", ".pptx", ".py", ".rb", ".sh", ".tar",
+                        ".tex", ".ts", ".txt", ".xlsx", ".xml", ".zip"}
+
+images_ext = {".png", ".jpeg", ".jpg", ".webp", ".gif"}
+
+
 @router.post("/{chat_id}/upload-file")
 async def upload_file(
         db_session: DBSessionDep,
@@ -104,7 +118,10 @@ async def upload_file(
         upload: UploadFile
 ) -> BaseResponse[PublicFile]:
     ext = pathlib.Path(upload.filename).suffix
-    if ext in {".png", ".jpeg", ".jpg", ".webp", ".gif"}:
+    if ext not in code_interpreter_ext and ext not in files_search_ext and ext not in images_ext:
+        raise BadRequestError(f"неподдерживаемый формат файла {ext}")
+
+    if ext in images_ext:
         if upload.size > MAX_IMAGE_SIZE:
             raise BadRequestError(
                 f"медиа файл {upload.filename} слишком большой. максимальный размер {humanize.naturalsize(MAX_IMAGE_SIZE)}")
@@ -145,7 +162,7 @@ async def upload_file(
         success=True,
         msg="файл загружен",
         data=PublicFile(
-            id=file.id,
+            id=file.openai_id,
             name=file.name,
             size=file.size,
             created_at=file.created_at
@@ -167,7 +184,7 @@ async def delete_file(
     if chat.user_id != user.id:
         raise NotFoundError("чат не найден")
 
-    file = await db_session.get(File, req.file_id)
+    file = await get_file_by_openai_id(db_session, req.file_id)
     if not file:
         raise NotFoundError("файл не найден")
 
@@ -193,7 +210,8 @@ async def send_message(
         db_session: DBSessionDep,
         user: ActiveUserDep,
         chat_id: int,
-) -> BaseResponse:
+        req: SendMessageRequest
+) -> StreamingResponse:
     chat = await db_session.get(Chat, chat_id)
     if not chat:
         raise NotFoundError("чат не найден")
@@ -201,7 +219,40 @@ async def send_message(
     if chat.user_id != user.id:
         raise NotFoundError("чат не найден")
 
-    pass
+    tools = []
+    if len(req.attachments) > 0:
+        files = await get_files_by_openai_ids(db_session, req.attachments)
+
+        file_search_unsupported = False
+        code_interpreter_unsupported = False
+        for file in files:
+            ext = pathlib.Path(file.name).suffix
+            if ext not in files_search_ext:
+                file_search_unsupported = True
+            if ext not in code_interpreter_ext:
+                code_interpreter_unsupported = True
+
+            if file_search_unsupported and code_interpreter_unsupported:
+                break
+
+        if not file_search_unsupported:
+            tools.append({"type": "file_search"})
+        if not code_interpreter_unsupported:
+            tools.append({"type": "code_interpreter"})
+
+    handler = EventHandler()
+
+    openai_msg = await openai_client.beta.threads.messages.create(thread_id=chat.openai_thread_id)
+
+    async def drain_steam():
+        async with openai_client.beta.threads.runs.stream(thread_id=chat.openai_thread_id,
+                                                          assistant_id=chat.openai_assistant_id,
+                                                          event_handler=handler) as stream:
+            await stream.until_done()
+
+    asyncio.create_task(drain_steam())
+
+    return StreamingResponse(content=handler.event_generator(), media_type="text/event-stream")
 
 
 @router.get("/list")

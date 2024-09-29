@@ -8,7 +8,7 @@ from app.models.assistant import Assistant
 from app.models.chat import Chat
 from app.models.user import User
 from app.prompts.default import default_chat
-from app.service.openai import openai_client
+from app.service.openai_api import openai_client
 
 
 async def add_org_context_to_user_chats(db_session: AsyncSession, user: User, org_id: int) -> None:
@@ -66,7 +66,7 @@ async def create_chat(db_session: AsyncSession, user: User, org_id: Optional[int
 async def obtain_openai_entities(chat: Chat) -> None:
     assistant = await openai_client.beta.assistants.create(
         model="gpt-4o",
-        tools=[{"type": "file_search"}],
+        tools=[{"type": "file_search"}, {"type": "code_interpreter"}],
         name=chat.name,
         description=chat.desc,
         instructions=chat.system_prompt,
