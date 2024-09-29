@@ -1,5 +1,4 @@
 import asyncio
-import uuid
 from enum import Enum
 from typing import Any
 
@@ -31,7 +30,7 @@ class EventHandler(AsyncAssistantEventHandler):
                  db_session: AsyncSession,
                  chat_id: int,
                  thread_id: str,
-                 user_msg_id: uuid.UUID,
+                 user_msg_id: int,
                  user_msg_openai_id: str):
         super().__init__()
         self.db_session = db_session
