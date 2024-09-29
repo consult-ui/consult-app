@@ -43,7 +43,7 @@ class EventHandler(AsyncAssistantEventHandler):
             chat_id=self.chat_id,
             role=MessageRole.USER,
             openai_id=message.id,
-            openai_msg=message,
+            openai_message=message,
         )
         self.db_session.add(msg)
         await self._event_queue.put(Event(type=EventType.MESSAGE_DONE, payload=message))
