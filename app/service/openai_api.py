@@ -4,9 +4,11 @@ from typing import Any
 
 from openai import AsyncOpenAI, AsyncAssistantEventHandler
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import override
 
 from app.config import settings
+from app.models.message import Message, MessageRole
 
 openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
 
@@ -24,11 +26,12 @@ class Event(BaseModel):
 
 
 class EventHandler(AsyncAssistantEventHandler):
-    def __init__(self):
+    def __init__(self, db_session: AsyncSession, chat_id: int):
         super().__init__()
+        self.db_session = db_session
+        self.chat_id = chat_id
         self._event_queue = asyncio.Queue()
         self._stream_closed = False
-        self.msg = None
 
     @override
     async def on_text_delta(self, delta, snapshot):
@@ -36,13 +39,20 @@ class EventHandler(AsyncAssistantEventHandler):
 
     @override
     async def on_message_done(self, message) -> None:
-        self.msg = message
+        msg = Message(
+            chat_id=self.chat_id,
+            role=MessageRole.USER,
+            openai_id=message.id,
+            openai_msg=message,
+        )
+        self.db_session.add(msg)
         await self._event_queue.put(Event(type=EventType.MESSAGE_DONE, payload=message))
 
     @override
     async def on_end(self) -> None:
         self._stream_closed = True
         await self._event_queue.put(None)
+        await self.db_session.commit()
 
     async def event_generator(self):
         while not self._stream_closed:

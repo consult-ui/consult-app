@@ -17,6 +17,7 @@ from app.exceptions import BadRequestError
 from app.exceptions import NotFoundError
 from app.models.chat import Chat
 from app.models.file import File
+from app.models.message import Message, MessageRole
 from app.schemas.assistant import PublicAssistant
 from app.schemas.chat import CreateChatRequest, UpdateChatRequest, PublicChat
 from app.schemas.chat import SendMessageRequest
@@ -252,6 +253,15 @@ async def send_message(
     openai_msg = await openai_client.beta.threads.messages.create(thread_id=chat.openai_thread_id,
                                                                   content=content,
                                                                   role="user")
+
+    user_msg = Message(
+        chat_id=chat_id,
+        role=MessageRole.USER,
+        openai_id=openai_msg.id,
+        openai_msg=openai_msg,
+    )
+
+    db_session.add(user_msg)
 
     async def drain_steam():
         async with openai_client.beta.threads.runs.stream(thread_id=chat.openai_thread_id,
