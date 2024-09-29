@@ -9,10 +9,10 @@ from sqlalchemy import (
     ForeignKey,
     Text,
 )
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import mapped_column, Mapped
 
 from app.models.base import Base
+from app.schemas.base import PydanticType
 
 
 class MessageRole(str, Enum):
@@ -30,7 +30,7 @@ class Message(Base):
     openai_id: Mapped[str] = mapped_column(Text, nullable=False)
 
     role: Mapped[MessageRole] = mapped_column(Text, nullable=False)
-    openai_msg: Mapped[OpenaiMessage] = mapped_column(JSONB, nullable=False)
+    openai_msg: Mapped[OpenaiMessage] = mapped_column(PydanticType(OpenaiMessage), nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
