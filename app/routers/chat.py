@@ -242,6 +242,13 @@ async def send_message(
 
     handler = EventHandler()
 
+    content = []
+    for node in req.content:
+        if node.type == "text":
+            content.append({"type": "text", "text": node.text})
+        elif node.type == "image_file":
+            content.append({"type": "image_file", "image_file": {"file_id": node.image_file.file_id, "detail": "auto"}})
+
     openai_msg = await openai_client.beta.threads.messages.create(thread_id=chat.openai_thread_id,
                                                                   content=req.content,
                                                                   role="user")
