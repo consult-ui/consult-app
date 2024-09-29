@@ -29,17 +29,9 @@ class EventHandler(AsyncAssistantEventHandler):
         self._event_queue = asyncio.Queue()
         self._stream_closed = False
 
-    # @override
-    # async def on_text_created(self, text: Text) -> None:
-    #     await self._event_queue.put(Event(type=EventType.TEXT_CREATED, payload=text))
-
     @override
     async def on_text_delta(self, delta, snapshot):
         await self._event_queue.put(Event(type=EventType.TEXT_DELTA, payload=delta))
-
-    # @override
-    # async def on_text_done(self, text: Text) -> None:
-    #     await self._event_queue.put(Event(type=EventType.TEXT_DONE, payload=text))
 
     @override
     async def on_message_done(self, message) -> None:
