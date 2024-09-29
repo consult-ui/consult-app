@@ -28,6 +28,7 @@ class EventHandler(AsyncAssistantEventHandler):
         super().__init__()
         self._event_queue = asyncio.Queue()
         self._stream_closed = False
+        self.msg = None
 
     @override
     async def on_text_delta(self, delta, snapshot):
@@ -35,6 +36,7 @@ class EventHandler(AsyncAssistantEventHandler):
 
     @override
     async def on_message_done(self, message) -> None:
+        self.msg = message
         await self._event_queue.put(Event(type=EventType.MESSAGE_DONE, payload=message))
 
     @override

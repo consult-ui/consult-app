@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
-from typing import TypedDict, Literal, Required, TypeAlias, Union, List
 
+from openai.types.beta.threads.message import Message as OpenaiMessage
 from sqlalchemy import (
     func,
     TIMESTAMP,
@@ -21,40 +21,6 @@ class MessageRole(str, Enum):
     ASSISTANT = "assistant"
 
 
-class ImageFileParam(TypedDict, total=False):
-    file_id: Required[str]
-    detail: Literal["auto", "low", "high"]
-
-
-class ImageFileContentBlockParam(TypedDict, total=False):
-    image_file: Required[ImageFileParam]
-    type: Required[Literal["image_file"]]
-
-
-class TextContentBlockParam(TypedDict, total=False):
-    text: Required[str]
-    type: Required[Literal["text"]]
-
-
-MessageContentPartParam: TypeAlias = Union[ImageFileContentBlockParam, TextContentBlockParam]
-
-
-class CodeInterpreterTool(TypedDict, total=False):
-    type: Literal["code_interpreter"]
-
-
-class AttachmentToolAssistantToolsFileSearchTypeOnly(TypedDict, total=False):
-    type: Literal["file_search"]
-
-
-AttachmentTool: TypeAlias = Union[CodeInterpreterTool, AttachmentToolAssistantToolsFileSearchTypeOnly]
-
-
-class Attachment(TypedDict, total=False):
-    file_id: str
-    tools: List[AttachmentTool]
-
-
 class Message(Base):
     __tablename__ = "messages"
 
@@ -64,8 +30,7 @@ class Message(Base):
     openai_id: Mapped[str] = mapped_column(Text, nullable=False)
 
     role: Mapped[MessageRole] = mapped_column(Text, nullable=False)
-    content: Mapped[List[MessageContentPartParam]] = mapped_column(JSONB, nullable=False)
-    attachments: Mapped[List[Attachment]] = mapped_column(JSONB, nullable=False, default=lambda _: [])
+    openai_msg: Mapped[OpenaiMessage] = mapped_column(JSONB, nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
