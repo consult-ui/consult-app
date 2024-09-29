@@ -50,9 +50,9 @@ class EventHandler(AsyncAssistantEventHandler):
 
     @override
     async def on_end(self) -> None:
+        await self.db_session.commit()
         self._stream_closed = True
         await self._event_queue.put(None)
-        await self.db_session.commit()
 
     async def event_generator(self):
         while not self._stream_closed:
