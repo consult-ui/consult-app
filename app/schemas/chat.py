@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 from enum import Enum
 from typing import Any
@@ -31,7 +30,7 @@ class PublicChat(BaseModel):
 
 
 class ImageFileParam(BaseModel):
-    file_id: uuid.UUID
+    file_id: str
 
 
 class ImageFileContentBlockParam(BaseModel):

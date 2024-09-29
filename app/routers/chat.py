@@ -242,7 +242,9 @@ async def send_message(
 
     handler = EventHandler()
 
-    openai_msg = await openai_client.beta.threads.messages.create(thread_id=chat.openai_thread_id)
+    openai_msg = await openai_client.beta.threads.messages.create(thread_id=chat.openai_thread_id,
+                                                                  content=req.content,
+                                                                  role="user")
 
     async def drain_steam():
         async with openai_client.beta.threads.runs.stream(thread_id=chat.openai_thread_id,
