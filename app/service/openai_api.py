@@ -56,7 +56,9 @@ class EventHandler(AsyncAssistantEventHandler):
             event = await self._event_queue.get()
             if event is None:
                 break
-            yield event.model_dump_json()
+
+            raw = event.payload.model_dump_json()
+            yield f"type: {event.type}\ndata: {raw}\n\n"
 
 
 async def main() -> None:
