@@ -57,7 +57,7 @@ class EventHandler(AsyncAssistantEventHandler):
                 break
 
             raw = event.payload.model_dump_json()
-            yield f"event: {event.type}\ndata: {raw}\n\n"
+            yield f"event: {event.type.value}\ndata: {raw}\n\n"
 
 
 async def main() -> None:
