@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Any
 
 from openai import AsyncOpenAI, AsyncAssistantEventHandler
-from openai.types.beta.threads import Text
 from pydantic import BaseModel
 from typing_extensions import override
 
@@ -30,17 +29,17 @@ class EventHandler(AsyncAssistantEventHandler):
         self._event_queue = asyncio.Queue()
         self._stream_closed = False
 
-    @override
-    async def on_text_created(self, text: Text) -> None:
-        await self._event_queue.put(Event(type=EventType.TEXT_CREATED, payload=text))
+    # @override
+    # async def on_text_created(self, text: Text) -> None:
+    #     await self._event_queue.put(Event(type=EventType.TEXT_CREATED, payload=text))
 
     @override
     async def on_text_delta(self, delta, snapshot):
         await self._event_queue.put(Event(type=EventType.TEXT_DELTA, payload=delta))
 
-    @override
-    async def on_text_done(self, text: Text) -> None:
-        await self._event_queue.put(Event(type=EventType.TEXT_DONE, payload=text))
+    # @override
+    # async def on_text_done(self, text: Text) -> None:
+    #     await self._event_queue.put(Event(type=EventType.TEXT_DONE, payload=text))
 
     @override
     async def on_message_done(self, message) -> None:
@@ -58,7 +57,7 @@ class EventHandler(AsyncAssistantEventHandler):
                 break
 
             raw = event.payload.model_dump_json()
-            yield f"type: {event.type}\ndata: {raw}\n\n"
+            yield f"event: {event.type}\ndata: {raw}\n\n"
 
 
 async def main() -> None:
