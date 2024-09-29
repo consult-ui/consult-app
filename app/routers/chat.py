@@ -241,7 +241,7 @@ async def send_message(
         if not code_interpreter_unsupported:
             tools.append({"type": "code_interpreter"})
 
-    handler = EventHandler()
+    handler = EventHandler(db_session=db_session, chat_id=chat_id)
 
     content = []
     for node in req.content:
