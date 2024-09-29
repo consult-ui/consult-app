@@ -250,7 +250,7 @@ async def send_message(
             content.append({"type": "image_file", "image_file": {"file_id": node.image_file.file_id, "detail": "auto"}})
 
     openai_msg = await openai_client.beta.threads.messages.create(thread_id=chat.openai_thread_id,
-                                                                  content=req.content,
+                                                                  content=content,
                                                                   role="user")
 
     async def drain_steam():
