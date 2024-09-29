@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 from enum import Enum
 from typing import Any
 
@@ -26,10 +27,18 @@ class Event(BaseModel):
 
 
 class EventHandler(AsyncAssistantEventHandler):
-    def __init__(self, db_session: AsyncSession, chat_id: int):
+    def __init__(self,
+                 db_session: AsyncSession,
+                 chat_id: int,
+                 thread_id: str,
+                 user_msg_id: uuid.UUID,
+                 user_msg_openai_id: str):
         super().__init__()
         self.db_session = db_session
         self.chat_id = chat_id
+        self.thread_id = thread_id
+        self.user_msg_id = user_msg_id
+        self.user_msg_openai_id = user_msg_openai_id
         self._event_queue = asyncio.Queue()
         self._stream_closed = False
 
@@ -50,6 +59,10 @@ class EventHandler(AsyncAssistantEventHandler):
 
     @override
     async def on_end(self) -> None:
+        user_msg = await self.db_session.get(Message, self.user_msg_id)
+        openai_user_msg = await openai_client.beta.threads.messages.retrieve(thread_id=self.thread_id,
+                                                                             message_id=self.user_msg_openai_id)
+        user_msg.openai_message = openai_user_msg.model_dump()
         await self.db_session.commit()
         self._stream_closed = True
         await self._event_queue.put(None)

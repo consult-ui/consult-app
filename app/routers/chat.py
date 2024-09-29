@@ -241,8 +241,6 @@ async def send_message(
         if not code_interpreter_unsupported:
             tools.append({"type": "code_interpreter"})
 
-    handler = EventHandler(db_session=db_session, chat_id=chat_id)
-
     content = []
     for node in req.content:
         if node.type == "text":
@@ -264,6 +262,8 @@ async def send_message(
     db_session.add(user_msg)
 
     await db_session.commit()
+
+    handler = EventHandler(db_session=db_session, chat_id=chat_id)
 
     async def drain_steam():
         async with openai_client.beta.threads.runs.stream(thread_id=chat.openai_thread_id,
