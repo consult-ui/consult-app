@@ -263,6 +263,8 @@ async def send_message(
 
     db_session.add(user_msg)
 
+    await db_session.commit()
+
     async def drain_steam():
         async with openai_client.beta.threads.runs.stream(thread_id=chat.openai_thread_id,
                                                           assistant_id=chat.openai_assistant_id,
