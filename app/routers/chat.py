@@ -258,7 +258,7 @@ async def send_message(
         chat_id=chat_id,
         role=MessageRole.USER,
         openai_id=openai_msg.id,
-        openai_message=openai_msg,
+        openai_message=openai_msg.model_dump(),
     )
 
     db_session.add(user_msg)
