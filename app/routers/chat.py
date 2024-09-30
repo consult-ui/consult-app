@@ -214,12 +214,13 @@ async def get_messages(
 ) -> BaseResponse[List[PublicMessage]]:
     messages = await get_chat_messages(db_session, chat_id)
 
-    dtos = map(lambda m: PublicMessage(**m.openai_message), messages)
+    dtos = list(map(lambda m: PublicMessage(**m.openai_message), messages))
+    dtos.sort(key=lambda x: x.created_at)
 
     return BaseResponse(
         success=True,
         msg="ок",
-        data=list(dtos),
+        data=dtos,
     )
 
 
