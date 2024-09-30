@@ -12,6 +12,7 @@ from app.config import MAX_FILE_SIZE, MAX_IMAGE_SIZE
 from app.crud.assistant import get_all_assistants
 from app.crud.chat import get_user_organization_chats
 from app.crud.file import get_file_by_openai_id, get_files_by_openai_ids
+from app.crud.messages import get_chat_messages
 from app.dependencies import ActiveUserDep, DBSessionDep, OrganizationIdDep
 from app.exceptions import BadRequestError
 from app.exceptions import NotFoundError
@@ -19,8 +20,7 @@ from app.models.chat import Chat
 from app.models.file import File
 from app.models.message import Message, MessageRole
 from app.schemas.assistant import PublicAssistant
-from app.schemas.chat import CreateChatRequest, UpdateChatRequest, PublicChat
-from app.schemas.chat import SendMessageRequest
+from app.schemas.chat import CreateChatRequest, UpdateChatRequest, PublicChat, SendMessageRequest, PublicMessage
 from app.schemas.file import DeleteFileRequest
 from app.schemas.file import PublicFile
 from app.schemas.response import BaseResponse
@@ -204,6 +204,23 @@ async def delete_file(
     await db_session.commit()
 
     return BaseResponse(success=True, msg="файл удален")
+
+
+@router.get("/{chat_id}/messages")
+async def get_messages(
+        db_session: DBSessionDep,
+        _: ActiveUserDep,
+        chat_id: int,
+) -> BaseResponse[List[PublicMessage]]:
+    messages = await get_chat_messages(db_session, chat_id)
+
+    dtos = map(lambda m: PublicMessage(**m.openai_message.model_dump()), messages)
+
+    return BaseResponse(
+        success=True,
+        msg="ок",
+        data=list(dtos),
+    )
 
 
 @router.post("/{chat_id}/send")

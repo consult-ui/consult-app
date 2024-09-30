@@ -4,6 +4,7 @@ from typing import Any
 from typing import Optional, List, Literal, TypeAlias, Union
 
 from openai import AsyncOpenAI
+from openai.types.beta.threads.message import MessageContent
 from pydantic import BaseModel
 
 from app.config import settings
@@ -61,3 +62,16 @@ class EventType(str, Enum):
 class Event(BaseModel):
     type: EventType
     payload: Any
+
+
+class PulicAttachment(BaseModel):
+    file_id: Optional[str] = None
+
+
+class PublicMessage(BaseModel):
+    id: str
+    attachments: Optional[List[PulicAttachment]] = None
+    content: List[MessageContent]
+    created_at: int
+    role: Literal["user", "assistant"]
+    status: Optional[Literal["in_progress", "incomplete", "completed"]] = None
