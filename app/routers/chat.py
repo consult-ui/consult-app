@@ -214,7 +214,7 @@ async def get_messages(
 ) -> BaseResponse[List[PublicMessage]]:
     messages = await get_chat_messages(db_session, chat_id)
 
-    dtos = map(lambda m: PublicMessage(**m.openai_message.model_dump()), messages)
+    dtos = map(lambda m: PublicMessage(**m.openai_message), messages)
 
     return BaseResponse(
         success=True,
