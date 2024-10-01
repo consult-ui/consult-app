@@ -266,8 +266,11 @@ async def send_message(
         elif node.type == "image_file":
             content.append({"type": "image_file", "image_file": {"file_id": node.image_file.file_id, "detail": "auto"}})
 
+    attachments = map(lambda x: {"file_id": x, "tools": tools}, req.attachments)
+
     openai_msg = await openai_client.beta.threads.messages.create(thread_id=chat.openai_thread_id,
                                                                   content=content,
+                                                                  attachments=attachments,
                                                                   role="user")
 
     user_msg = Message(
