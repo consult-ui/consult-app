@@ -21,5 +21,5 @@ class MessageAdmin(ModelView, model=Message):
 
     form_excluded_columns = [Message.id, Message.created_at]
 
-    page_size = 50
-    page_size_options = [25, 50, 100, 200]
+    page_size = 10
+    page_size_options = [25, 50]
