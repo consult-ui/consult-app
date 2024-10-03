@@ -1,5 +1,4 @@
 import asyncio
-import pathlib
 from enum import Enum
 from typing import Any
 
@@ -61,7 +60,7 @@ class EventHandler(AsyncAssistantEventHandler):
                 continue
 
             file = File(
-                name=pathlib.Path(f.filename).name,
+                name=f.filename,
                 size=f.bytes,
                 chat_id=self.chat_id,
                 openai_id=f.id,

@@ -229,7 +229,7 @@ async def download_file(
     return StreamingResponse(content=content,
                              media_type="application/octet-stream",
                              headers={
-                                 "Content-Disposition": f"attachment; filename={file.name}",
+                                 "Content-Disposition": f"attachment; filename={pathlib.Path(file.name).name}",
                                  "Content-Length": str(file.size),
                                  "Content-Type": "application/octet-stream",
                              })
