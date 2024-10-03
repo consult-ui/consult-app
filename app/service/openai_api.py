@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing_extensions import override
 
 from app.config import settings
+from app.models.file import File
 from app.models.message import Message, MessageRole
 
 openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
@@ -39,6 +40,8 @@ class EventHandler(AsyncAssistantEventHandler):
 
     @override
     async def on_message_done(self, message) -> None:
+        await self._event_queue.put(Event(type=EventType.MESSAGE_DONE, payload=message))
+
         msg = Message(
             chat_id=self.chat_id,
             role=MessageRole.ASSISTANT,
@@ -46,7 +49,23 @@ class EventHandler(AsyncAssistantEventHandler):
             openai_message=message.model_dump(),
         )
         self.db_session.add(msg)
-        await self._event_queue.put(Event(type=EventType.MESSAGE_DONE, payload=message))
+
+        file_ids = [a.file_id for a in message.attachments if a.file_id]
+        openai_files = await asyncio.gather(
+            *[openai_client.files.retrieve(file_id=i) for i in file_ids]
+        )
+
+        for f in openai_files:
+            if not f:
+                continue
+                
+            file = File(
+                name=f.filename,
+                size=f.bytes,
+                chat_id=self.chat_id,
+                openai_id=f.id,
+            )
+            self.db_session.add(file)
 
     @override
     async def on_end(self) -> None:

@@ -206,6 +206,35 @@ async def delete_file(
     return BaseResponse(success=True, msg="файл удален")
 
 
+@router.get("/{chat_id}/download/{file_id}")
+async def download_file(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        chat_id: int,
+        file_id: str,
+) -> StreamingResponse:
+    chat = await db_session.get(Chat, chat_id)
+    if not chat:
+        raise NotFoundError("чат не найден")
+
+    if chat.user_id != user.id:
+        raise NotFoundError("чат не найден")
+
+    file = await get_file_by_openai_id(db_session, file_id)
+    if not file:
+        raise NotFoundError("файл не найден")
+
+    content = await openai_client.files.content(file.openai_id)
+
+    return StreamingResponse(content=content.aiter_bytes(256 * 1024),
+                             media_type="application/octet-stream",
+                             headers={
+                                 "Content-Disposition": f"attachment; filename={file.name}",
+                                 "Content-Length": str(file.size),
+                                 "Content-Type": "application/octet-stream",
+                             })
+
+
 @router.get("/{chat_id}/messages")
 async def get_messages(
         db_session: DBSessionDep,
