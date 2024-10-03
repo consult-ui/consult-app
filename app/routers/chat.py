@@ -226,10 +226,10 @@ async def download_file(
 
     content = await openai_client.files.content(file.openai_id)
 
-    return StreamingResponse(content=content.aiter_bytes(256 * 1024),
+    return StreamingResponse(content=content,
                              media_type="application/octet-stream",
                              headers={
-                                 "Content-Disposition": f"attachment; filename={file.name}",
+                                 "Content-Disposition": f"attachment; filename={pathlib.Path(file.name).name}",
                                  "Content-Length": str(file.size),
                                  "Content-Type": "application/octet-stream",
                              })
