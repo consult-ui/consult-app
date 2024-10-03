@@ -3,7 +3,7 @@ import pathlib
 from typing import List
 
 import humanize
-from fastapi import APIRouter, UploadFile
+from fastapi import APIRouter, UploadFile, Response
 from fastapi.responses import StreamingResponse
 from loguru import logger
 
@@ -208,6 +208,7 @@ async def delete_file(
 
 @router.get("/{chat_id}/download-file/{file_id}")
 async def download_file(
+        response: Response,
         db_session: DBSessionDep,
         user: ActiveUserDep,
         chat_id: int,
@@ -226,13 +227,11 @@ async def download_file(
 
     content = await openai_client.files.content(file.openai_id)
 
+    response.headers["Content-Disposition"] = f"attachment; filename={pathlib.Path(file.name).name}"
+    response.headers["Content-Type"] = "application/octet-stream"
+
     return StreamingResponse(content=await content.aiter_bytes(256 * 1024),
-                             media_type="application/octet-stream",
-                             headers={
-                                 "Content-Disposition": f"attachment; filename={pathlib.Path(file.name).name}",
-                                 "Content-Length": str(file.size),
-                                 "Content-Type": "application/octet-stream",
-                             })
+                             media_type="application/octet-stream")
 
 
 @router.get("/{chat_id}/messages")
