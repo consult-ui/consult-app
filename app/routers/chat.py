@@ -206,7 +206,7 @@ async def delete_file(
     return BaseResponse(success=True, msg="файл удален")
 
 
-@router.get("/{chat_id}/download/{file_id}")
+@router.get("/{chat_id}/download-file/{file_id}")
 async def download_file(
         db_session: DBSessionDep,
         user: ActiveUserDep,
