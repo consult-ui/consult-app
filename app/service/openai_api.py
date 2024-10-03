@@ -1,4 +1,5 @@
 import asyncio
+import pathlib
 from enum import Enum
 from typing import Any
 
@@ -58,9 +59,9 @@ class EventHandler(AsyncAssistantEventHandler):
         for f in openai_files:
             if not f:
                 continue
-                
+
             file = File(
-                name=f.filename,
+                name=pathlib.Path(f.filename).name,
                 size=f.bytes,
                 chat_id=self.chat_id,
                 openai_id=f.id,
