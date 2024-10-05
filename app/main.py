@@ -10,6 +10,7 @@ from sqladmin import Admin
 import app.routers.auth as auth
 import app.routers.chat as chat
 import app.routers.contact as contact
+import app.routers.etc as etc
 import app.routers.organization as organization
 import app.routers.user as user
 from app.admins.assistant import AssistantAdmin
@@ -75,6 +76,7 @@ app.include_router(auth.router)
 app.include_router(organization.router)
 app.include_router(chat.router)
 app.include_router(contact.router)
+app.include_router(etc.router)
 
 admin = Admin(
     app=app,

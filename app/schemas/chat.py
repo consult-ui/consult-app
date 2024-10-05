@@ -3,13 +3,8 @@ from enum import Enum
 from typing import Any
 from typing import Optional, List, Literal, TypeAlias, Union
 
-from openai import AsyncOpenAI
 from openai.types.beta.threads.message import MessageContent
 from pydantic import BaseModel
-
-from app.config import settings
-
-openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
 
 
 class UpdateChatRequest(BaseModel):
