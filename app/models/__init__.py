@@ -1,0 +1,9 @@
+import app.models.assistant
+import app.models.base
+import app.models.chat
+import app.models.contact
+import app.models.file
+import app.models.message
+import app.models.organization
+import app.models.refresh_session
+import app.models.user

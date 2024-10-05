@@ -8,7 +8,7 @@ from app.models.base import Base
 
 
 class ContactRequest(Base):
-    __tablename__ = "contact_request"
+    __tablename__ = "contact_requests"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(Text, nullable=True)
