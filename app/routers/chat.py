@@ -1,5 +1,6 @@
 import asyncio
 import pathlib
+import random
 from typing import List
 
 import humanize
@@ -376,6 +377,8 @@ async def get_questions(
         questions = await service.generate_questions_for_chat(chat)
         chat.questions = questions
         await db_session.commit()
+
+    random.shuffle(chat.questions)
 
     return BaseResponse(
         success=True,
