@@ -32,7 +32,7 @@ class Chat(Base):
     openai_assistant_id: Mapped[str] = mapped_column(Text, nullable=False)
     openai_thread_id: Mapped[str] = mapped_column(Text, nullable=False)
 
-    questions: Mapped[List[str]] = mapped_column(ARRAY(Text), nullable=False, default=lambda x: [])
+    questions: Mapped[List[str]] = mapped_column(ARRAY(Text), nullable=False, server_default="{}::text[]")
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
