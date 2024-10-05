@@ -14,6 +14,7 @@ from app.service.openai_api import openai_client
 async def add_org_context_to_user_chats(db_session: AsyncSession, user: User, org_id: int) -> None:
     chats = await get_user_organization_chats(db_session, user.id, org_id=None)
     for chat in chats:
+        chat.organization_id = org_id
         chat.system_prompt = make_system_prompt(user, org_id, chat.system_prompt)
 
 

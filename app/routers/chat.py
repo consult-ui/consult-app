@@ -288,6 +288,8 @@ async def send_message(
             tools.append({"type": "file_search"})
         if not code_interpreter_unsupported:
             tools.append({"type": "code_interpreter"})
+    else:
+        tools.append({"type": "code_interpreter"})
 
     content = []
     for node in req.content:

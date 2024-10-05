@@ -12,9 +12,6 @@ from app.config import settings
 from app.schemas.base import json_serializer
 
 
-# Heavily inspired by https://praciano.com.br/fastapi-and-async-sqlalchemy-20-with-pytest-done-right.html
-
-
 class DatabaseSessionManager:
     def __init__(self, dsn: str, engine_kwargs=None):
         if engine_kwargs is None:
