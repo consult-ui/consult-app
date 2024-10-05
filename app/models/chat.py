@@ -18,8 +18,9 @@ class Chat(Base):
     __tablename__ = "chats"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
-    organization_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("organizations.id"), nullable=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    organization_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("organizations.id", ondelete="CASCADE"),
+                                                 nullable=True)
 
     name: Mapped[str] = mapped_column(Text, nullable=False)
     desc: Mapped[str] = mapped_column(Text, nullable=False, default="")
