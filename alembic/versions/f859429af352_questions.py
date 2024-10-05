@@ -1,8 +1,8 @@
 """questions
 
-Revision ID: bc7edcaf30c8
+Revision ID: f859429af352
 Revises: 90232f2854f1
-Create Date: 2024-10-05 14:44:25.209529
+Create Date: 2024-10-05 15:01:49.955776
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'bc7edcaf30c8'
+revision: str = 'f859429af352'
 down_revision: Union[str, None] = '90232f2854f1'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,7 +29,8 @@ def upgrade() -> None:
                     sa.PrimaryKeyConstraint('id')
                     )
     op.drop_table('contact_request')
-    op.add_column('chats', sa.Column('questions', sa.ARRAY(sa.Text()), server_default='{}::text[]', nullable=False))
+    op.add_column('chats',
+                  sa.Column('questions', sa.ARRAY(sa.Text()), server_default='ARRAY[]::text[]', nullable=False))
     op.drop_constraint('chats_user_id_fkey', 'chats', type_='foreignkey')
     op.create_foreign_key(None, 'chats', 'users', ['user_id'], ['id'])
     op.drop_index('ix_files_openai_id', table_name='files')
@@ -55,6 +56,7 @@ def downgrade() -> None:
     op.create_foreign_key('chats_user_id_fkey', 'chats', 'users', ['user_id'], ['id'], ondelete='CASCADE')
     op.drop_column('chats', 'questions')
     op.create_table('contact_request',
+
                     sa.Column('id', sa.BIGINT(), autoincrement=True, nullable=False),
                     sa.Column('name', sa.TEXT(), autoincrement=False, nullable=True),
                     sa.Column('email', sa.TEXT(), autoincrement=False, nullable=True),
