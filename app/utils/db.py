@@ -73,7 +73,6 @@ sessionmanager = DatabaseSessionManager(
     {
         "echo": settings.pg_echo,
         "json_serializer": json_serializer,
-        "pool_size": 15,
-        "max_overflow": 5,
+        "pool_size": 0,
     },
 )
