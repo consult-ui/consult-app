@@ -75,7 +75,7 @@ async def generate_questions_for_chat(chat: Chat) -> List[str]:
             },
             {
                 "role": "user",
-                "content": f"Generate 10 random questions in Russian strictly related to your system prompt of the chat '{chat.name}'."
+                "content": f"Generate 10 short random questions in Russian strictly related to your system prompt of the chat '{chat.name}'."
             }
         ],
         response_format=ChatQuestions,
