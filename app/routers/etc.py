@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.get("/tip")
-async def daily_tip(
+async def get_tip(
         db_session: DBSessionDep,
         user: ActiveUserDep,
         org_id: OrganizationIdDep,
