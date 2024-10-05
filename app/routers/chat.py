@@ -357,3 +357,28 @@ async def list_assistants(db_session: DBSessionDep, _: ActiveUserDep) -> BaseRes
         msg="ок",
         data=make_public_assistants(assistants),
     )
+
+
+@router.get("/{chat_id}/questions")
+async def get_questions(
+        db_session: DBSessionDep,
+        user: ActiveUserDep,
+        chat_id: int,
+) -> BaseResponse[List[str]]:
+    chat = await db_session.get(Chat, chat_id)
+    if not chat:
+        raise NotFoundError("чат не найден")
+
+    if chat.user_id != user.id:
+        raise NotFoundError("чат не найден")
+
+    if not chat.questions:
+        questions = await service.generate_questions_for_chat(chat)
+        chat.questions = questions
+        await db_session.commit()
+
+    return BaseResponse(
+        success=True,
+        msg="ок",
+        data=chat.questions,
+    )

@@ -75,3 +75,7 @@ class PublicMessage(BaseModel):
     created_at: int
     role: Literal["user", "assistant"]
     status: Optional[Literal["in_progress", "incomplete", "completed"]] = None
+
+
+class ChatQuestions(BaseModel):
+    questions: List[str]

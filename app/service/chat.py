@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +8,7 @@ from app.models.assistant import Assistant
 from app.models.chat import Chat
 from app.models.user import User
 from app.prompts.default import default_chat
+from app.schemas.chat import ChatQuestions
 from app.service.openai_api import openai_client
 
 
@@ -62,6 +63,25 @@ async def create_chat(db_session: AsyncSession, user: User, org_id: Optional[int
     await db_session.refresh(chat)
 
     return chat
+
+
+async def generate_questions_for_chat(chat: Chat) -> List[str]:
+    completion = await openai_client.beta.chat.completions.parse(
+        model="gpt-4o-2024-08-06",
+        messages=[
+            {
+                "role": "system",
+                "content": chat.system_prompt
+            },
+            {
+                "role": "user",
+                "content": f"Generate 10 random questions in Russian strictly related to your system prompt of the chat '{chat.name}'."
+            }
+        ],
+        response_format=ChatQuestions,
+        temperature=0.9,
+    )
+    return completion.choices[0].message.parsed.questions
 
 
 async def obtain_openai_entities(chat: Chat) -> None:

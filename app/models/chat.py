@@ -1,11 +1,13 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import (
     func,
     TIMESTAMP,
     BigInteger,
     Text,
-    ForeignKey
+    ForeignKey,
+    ARRAY
 )
 from sqlalchemy.orm import mapped_column, Mapped
 
@@ -29,6 +31,8 @@ class Chat(Base):
 
     openai_assistant_id: Mapped[str] = mapped_column(Text, nullable=False)
     openai_thread_id: Mapped[str] = mapped_column(Text, nullable=False)
+
+    questions: Mapped[List[str]] = mapped_column(ARRAY(Text), nullable=False, default=lambda x: [])
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), nullable=False, default=func.now()
