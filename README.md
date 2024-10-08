@@ -12,8 +12,10 @@
 *Запустить тесты без Docker:*
 1. Создать и активировать виртуальное окружение 
 2. Установить зависимости из requirements.txt
-3. python -m pytest -s -vv --alluredir=allure-results
+3. В директории consult переименовать .env.local в .env и закинуть в него данные
+3. python -m pytest
 4. allure serve 
 
 Перед запуском тестов необходимо установить allure server: <https://allurereport.org/docs/install/>
 Для запуска в CI можно использовать документацию: <https://allurereport.org/docs/integrations-github/>
+

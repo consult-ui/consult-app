@@ -1,0 +1,9 @@
+[tool.black]
+line-length = 88  
+exclude = '.git|venv|build' 
+
+[tool.pytest.ini_options]
+addopts = "-s -vv --alluredir=allure-results --clean-alluredir"
+testpaths = [
+    "tests", 
+]
